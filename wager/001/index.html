@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Wager 001 — Stake + Wager</title>
+<meta name="description" content="28 hours are on the table. This wager asks for 20 minutes.">
+<meta property="og:title" content="Wager 001 — Stake + Wager">
+<meta property="og:description" content="28 hours are on the table. This wager asks for 20 minutes.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<main class="sheet">
+
+  <div class="mast">
+    <a href="/"><b>Stake&thinsp;+&thinsp;Wager</b></a>
+    <span>Wager 001, opened <time datetime="2026-09-02">2 September 2026</time></span>
+  </div>
+
+  <div class="identity">
+    <div class="name">John Obidinma Okoli</div>
+    <p><span class="fill">One sentence: what you do, and why this problem is yours.</span></p>
+  </div>
+
+  <section class="balance">
+    <div class="pan pan-loaded">
+      <h2>On the table</h2>
+      <span class="amount">28 hours</span>
+      <span class="unit">committed over the next fourteen days</span>
+      <div class="bar"><i></i></div>
+      <ul>
+        <li>This page, written and built</li>
+        <li>Fifteen approaches made by hand</li>
+        <li>The result published either way</li>
+      </ul>
+    </div>
+
+    <div class="pan pan-open">
+      <h2>Your side</h2>
+      <span class="amount">20 minutes</span>
+      <span class="unit">once, returned in writing</span>
+      <div class="bar"><i></i></div>
+      <ul>
+        <li>Read this page cold</li>
+        <li>Answer three questions</li>
+        <li>Send it back by <time datetime="2026-09-11">11 September</time></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="turn">
+    <h1 class="claim">Would you put 20 minutes behind a stranger's idea?</h1>
+    <p>Most people say yes to that in principle and no in practice, and I would rather find out which is true here than keep designing around a guess. So this page is both the thing being tested and the test itself. It asks you for something small, and it tells you exactly what sits on the other side of the table before it does.</p>
+  </section>
+
+  <div class="record">
+    <section class="entry">
+      <h3>The wager</h3>
+      <div>
+        <p class="first">Read this page as though it had arrived from someone you have never heard of, then write me a short answer to three questions.</p>
+        <p>Would you have said yes. If not, where exactly did you stop reading. What was missing that you would have needed in order to commit.</p>
+        <p>No format and no length requirement. A blunt paragraph is worth more to me than a considered page.</p>
+      </div>
+    </section>
+
+    <section class="entry">
+      <h3>What it resolves</h3>
+      <div>
+        <p>By <time datetime="2026-09-16">16 September 2026</time>: fifteen people will have received this page, and at least <span class="tab">six</span> will have sent a written assessment.</p>
+        <p>Six or more resolves yes. Five or fewer resolves no, and it gets published as no.</p>
+        <p class="fine"><span class="fill">Confirm these numbers and dates before sending. Set them now, not once you can see how it is going.</span></p>
+      </div>
+    </section>
+
+    <section class="entry">
+      <h3>Terms</h3>
+      <div>
+        <p class="fine">This is an advice wager. What you send is given voluntarily and I may use it in the project however I like. No ownership, payment, or further obligation is implied on either side. Your name appears on the published result only if you tell me it can.</p>
+      </div>
+    </section>
+
+    <section class="entry">
+      <h3>What you get back</h3>
+      <div>
+        <p>One email on <time datetime="2026-09-16">16 September</time>. Whether six people came through, what the assessments had in common, and what changed because of yours.</p>
+        <p>If it resolves no, the same email says so.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="action">
+    <button class="commit" id="commit" aria-expanded="false" aria-controls="confirm">I'll wager 20 minutes</button>
+    <span class="pass">Not for you? <a href="mailto:REPLACE@EXAMPLE.COM?subject=Wager%20001%2C%20passing">One line on why</a> is worth as much to me as a yes.</span>
+
+    <div class="confirm" id="confirm" hidden>
+      <h3>You are about to put 20 minutes on the table</h3>
+      <ul>
+        <li>Read the page cold and answer the three questions</li>
+        <li>Send it by <time datetime="2026-09-11">11 September 2026</time></li>
+        <li>Recorded as an advice wager under the terms above</li>
+      </ul>
+      <p class="fine">Given voluntarily. The creator may use it. No ownership is implied.</p>
+      <a class="seal" href="mailto:REPLACE@EXAMPLE.COM?subject=Wager%20001%2C%20I%27m%20in&amp;body=Name%3A%0A%0AI%27ll%20send%20my%20answers%20by%2011%20September.%0A%0A1.%20Would%20you%20have%20said%20yes%3F%0A%0A2.%20If%20not%2C%20where%20did%20you%20stop%20reading%3F%0A%0A3.%20What%20was%20missing%3F%0A%0A">Confirm the wager</a>
+    </div>
+  </div>
+
+  <footer>
+    Stake + Wager is not a company. It is one experiment, run by hand, with a stop condition written down before it started.
+    <span class="fill">Replace REPLACE@EXAMPLE.COM in both links, then delete this line.</span>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  var btn=document.getElementById('commit');
+  var panel=document.getElementById('confirm');
+  var openBar=document.querySelector('.pan-open .bar i');
+  btn.addEventListener('click',function(){
+    var opening=panel.hasAttribute('hidden');
+    if(opening){panel.removeAttribute('hidden');}
+    else{panel.setAttribute('hidden','');}
+    btn.setAttribute('aria-expanded',String(opening));
+    if(openBar){openBar.style.width=opening?'100%':'0';}
+  });
+})();
+</script>
+</body>
+</html>
