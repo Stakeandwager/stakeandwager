@@ -5,44 +5,459 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Stake + Wager</title>
-<meta name="description" content="One open wager at a time. Nothing goes on the table empty.">
+<meta name="description" content="There is a table inside.">
+<meta property="og:title" content="Stake + Wager">
+<meta property="og:description" content="There is a table inside.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:wght@300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<style>
+:root{
+  --night:#0E1613;
+  --room:#141C19;
+  --lamp:#E9DEC6;
+  --lamp-dim:#8D968D;
+  --table:#D9DEDC;
+  --table-edge:#B3BCB8;
+  --ink:#12201C;
+  --ink-soft:#576461;
+  --bronze:#8C6B33;
+  --bronze-lit:#C79A46;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html,body{height:100%}
+
+body{
+  margin:0;
+  background:var(--night);
+  color:var(--lamp);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16.5px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* the room: a pool of light that grows once the door opens */
+#glow{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(120% 80% at 50% 42%, rgba(233,222,198,.10), rgba(233,222,198,0) 62%);
+  opacity:0;transition:opacity 1.4s ease;
+}
+body.inside{background:var(--room)}
+body.inside #glow{opacity:1}
+
+#stage{position:relative;z-index:1;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 24px}
+
+.scene{display:none;width:100%;max-width:640px;text-align:center}
+.scene.on{display:block}
+
+@media (prefers-reduced-motion:no-preference){
+  .scene.on{animation:arrive .5s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+
+/* ---------- typography ---------- */
+.line{
+  font-family:"Spectral",Georgia,serif;font-weight:300;
+  font-size:clamp(27px,5.6vw,40px);line-height:1.2;
+  letter-spacing:-0.02em;margin:0 auto;max-width:20ch;
+}
+.sub{color:var(--lamp-dim);max-width:52ch;margin:18px auto 0;font-size:15.5px}
+.quiet{color:var(--lamp-dim);font-size:14px}
+
+/* ---------- scene 0: outside ---------- */
+#knock{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:132px;height:132px;margin-top:44px;
+  border:1px solid rgba(233,222,198,.28);border-radius:50%;
+  background:transparent;color:var(--lamp);
+  font-family:"Spectral",Georgia,serif;font-size:22px;letter-spacing:.01em;
+  cursor:pointer;transition:border-color .3s ease,background .3s ease;
+}
+#knock:hover{border-color:rgba(233,222,198,.6);background:rgba(233,222,198,.04)}
+#knock:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:4px}
+#knock.rapping{animation:rap .9s ease-in-out}
+@keyframes rap{
+  0%,100%{transform:scale(1)}
+  12%{transform:scale(.955)}  22%{transform:scale(1)}
+  38%{transform:scale(.955)}  48%{transform:scale(1)}
+  64%{transform:scale(.955)}  74%{transform:scale(1)}
+}
+
+/* ---------- the table ---------- */
+.table{
+  background:var(--table);color:var(--ink);
+  border-radius:3px;padding:26px 24px 28px;margin:34px auto 0;text-align:left;
+  box-shadow:0 26px 60px -26px rgba(0,0,0,.75), 0 0 0 1px rgba(179,188,184,.5);
+}
+.pans{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pan{padding:2px 20px}
+.pan + .pan{border-left:1px solid var(--table-edge)}
+.pan:first-child{padding-left:0}
+.pan:last-child{padding-right:0}
+.pan h2{margin:0 0 12px;font-size:13.5px;font-weight:500;color:var(--ink-soft)}
+.weight{
+  font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:clamp(24px,5vw,31px);line-height:1.05;letter-spacing:-0.015em;display:block;
+}
+.pan.waiting .weight{color:var(--ink-soft)}
+.note{display:block;font-size:13.5px;color:var(--ink-soft);margin-top:5px;line-height:1.45}
+.bar{height:3px;margin:15px 0 13px;background:rgba(87,100,97,.22);overflow:hidden;border-radius:2px}
+.bar i{display:block;height:100%;width:0;background:var(--bronze);transition:width .9s cubic-bezier(.3,.8,.3,1)}
+.pan.loaded .bar i{width:100%}
+.pan ul{margin:0;padding:0;list-style:none;font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+.pan li{padding:3px 0}
+
+@media (max-width:560px){
+  .pans{grid-template-columns:1fr}
+  .pan{padding:0}
+  .pan + .pan{border-left:0;border-top:1px solid var(--table-edge);margin-top:20px;padding-top:20px}
+}
+
+/* ---------- actions ---------- */
+.acts{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.go{
+  border:0;border-radius:2px;background:var(--lamp);color:var(--ink);
+  font-family:inherit;font-size:16.5px;font-weight:500;padding:16px 30px;cursor:pointer;
+  transition:background .25s ease;
+}
+.go:hover{background:#fff}
+.go:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
+.away{
+  border:0;background:transparent;color:var(--lamp-dim);
+  font-family:inherit;font-size:14.5px;padding:8px 12px;cursor:pointer;text-decoration:underline;
+  text-underline-offset:3px;
+}
+.away:hover{color:var(--lamp)}
+.away:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
+
+/* ---------- the work ---------- */
+.terms{
+  margin:26px auto 0;max-width:56ch;text-align:left;
+  font-size:13.5px;color:var(--lamp-dim);line-height:1.6;
+  border-top:1px solid rgba(233,222,198,.14);padding-top:16px;
+}
+form{margin:30px auto 0;max-width:560px;text-align:left}
+.q{margin-bottom:22px}
+.q label{display:block;font-size:15px;margin-bottom:8px}
+.q span{display:block;font-size:13.5px;color:var(--lamp-dim);margin-bottom:8px}
+input[type=text],input[type=email],textarea{
+  width:100%;background:rgba(233,222,198,.05);color:var(--lamp);
+  border:1px solid rgba(233,222,198,.22);border-radius:2px;
+  font-family:inherit;font-size:15.5px;padding:11px 12px;line-height:1.5;
+}
+textarea{min-height:88px;resize:vertical}
+input:focus,textarea:focus{outline:0;border-color:var(--bronze-lit);background:rgba(233,222,198,.08)}
+.hp{position:absolute;left:-9999px}
+.err{color:var(--bronze-lit);font-size:14px;margin-top:12px;min-height:1px}
+
+/* ---------- resolution ---------- */
+.tally{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:18px;margin:28px auto 0;max-width:520px;text-align:left;
+}
+.tally div b{display:block;font-family:"Spectral",Georgia,serif;font-weight:400;font-size:27px;line-height:1.1}
+.tally div span{font-size:13.5px;color:var(--lamp-dim)}
+
+footer{
+  position:fixed;left:0;right:0;bottom:0;z-index:2;
+  text-align:center;font-size:12.5px;color:rgba(141,150,141,.75);
+  padding:14px 20px;pointer-events:none;
+}
+footer b{font-weight:500;color:rgba(233,222,198,.7)}
+</style>
 </head>
 <body>
-<main class="sheet">
+<div id="glow"></div>
 
-  <div class="mast">
-    <b>Stake&thinsp;+&thinsp;Wager</b>
-    <span>One open wager</span>
-  </div>
+<main id="stage">
 
-  <section class="turn" style="padding-top:0">
-    <h1 class="claim">A table cannot be opened empty.</h1>
-    <p>Someone puts something of their own on the table before anyone else arrives. A stranger reads what is there and decides whether to put something of theirs behind it. On a stated date, reality answers, and both sides see the result.</p>
-    <p>That is the whole mechanism. Everything here is a test of whether it works.</p>
+  <!-- 0 ................................................. outside -->
+  <section class="scene on" data-scene="outside">
+    <p class="line">There is a table inside.</p>
+    <button id="knock" type="button">Knock</button>
   </section>
 
-  <div style="margin-top:40px">
-    <a class="open-wager" href="/wager/001/">
-      <span class="ref">Wager 001, open until 16 September 2026</span>
-      <div class="headline">Would you put 20 minutes behind a stranger's idea?</div>
-      <div class="terms">
-        <span><b>28 hours</b>on the table</span>
-        <span><b>20 minutes</b>asked of you</span>
-        <span><b>16 September</b>resolves</span>
+  <!-- 1 ................................................. the door opens -->
+  <section class="scene" data-scene="enter">
+    <p class="line">A table cannot be opened empty.</p>
+    <div class="acts"><button class="go" type="button" data-go="table">Go on</button></div>
+  </section>
+
+  <!-- 2 ................................................. the table -->
+  <section class="scene" data-scene="table">
+    <div class="table">
+      <div class="pans">
+        <div class="pan loaded">
+          <h2>Already on the table</h2>
+          <span class="weight">28 hours</span>
+          <span class="note">committed by the creator</span>
+          <div class="bar"><i></i></div>
+          <ul>
+            <li>A written brief</li>
+            <li>Fifteen approaches by hand</li>
+            <li>The result published either way</li>
+          </ul>
+        </div>
+        <div class="pan waiting" id="pan-you">
+          <h2>Your side</h2>
+          <span class="weight" id="your-weight">Empty</span>
+          <span class="note" id="your-note">nothing down yet</span>
+          <div class="bar"><i id="your-bar"></i></div>
+          <ul id="your-list"><li>&nbsp;</li></ul>
+        </div>
       </div>
-    </a>
-  </div>
+    </div>
+    <div class="acts"><button class="go" type="button" data-go="proposition">Look closer</button></div>
+  </section>
 
-  <p class="closed">No resolved wagers yet. When 001 closes, the result is published here whichever way it goes.</p>
+  <!-- 3 ................................................. the proposition -->
+  <section class="scene" data-scene="proposition">
+    <p class="quiet">Wager 001</p>
+    <p class="line" style="margin-top:14px">Would you put 20 minutes behind a stranger's idea?</p>
+    <p class="sub">Most people say yes in principle and no in practice. This page is the test.</p>
+    <div class="acts"><button class="go" type="button" data-go="decision">Continue</button></div>
+  </section>
 
-  <footer>
-    Stake + Wager is not a company. It is one experiment, run by hand, with a stop condition written down before it started.
-  </footer>
+  <!-- 4 ................................................. the decision -->
+  <section class="scene" data-scene="decision">
+    <p class="line">Someone has put something down. Now it is your turn to decide.</p>
+    <div class="acts">
+      <button class="go" type="button" data-go="sit">Sit at the table</button>
+      <button class="away" type="button" data-go="walkaway">Walk away</button>
+    </div>
+  </section>
+
+  <!-- 4b ................................................ walk away -->
+  <section class="scene" data-scene="walkaway">
+    <p class="line">Walking away is a real answer.</p>
+    <p class="sub">It is worth as much to this experiment as sitting down, but only if I know why. One line is plenty.</p>
+    <form id="pass-form" name="wager-001-pass" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="wager-001-pass">
+      <p class="hp"><label>Leave blank <input name="bot-field"></label></p>
+      <div class="q">
+        <label for="pass-why">What stopped you?</label>
+        <textarea id="pass-why" name="why" required></textarea>
+      </div>
+      <div class="q">
+        <label for="pass-who">Your name or email, if you want the result anyway</label>
+        <input type="text" id="pass-who" name="who">
+      </div>
+      <button class="go" type="submit">Send it</button>
+      <p class="err" id="pass-err"></p>
+    </form>
+    <div class="acts"><button class="away" type="button" data-go="decision">Back to the table</button></div>
+  </section>
+
+  <!-- 5 ................................................. sit down -->
+  <section class="scene" data-scene="sit">
+    <p class="line">You are at the table.</p>
+    <p class="sub">You haven't put anything down yet. What is being asked is 20 minutes: read the wager, answer three questions, send it back by <time datetime="2026-09-18">18 September</time>.</p>
+    <p class="terms">Given voluntarily. I may use what you send in the project however I like. No ownership, payment, or further obligation is implied on either side. Your name appears on the published result only if you say it can.</p>
+    <div class="acts">
+      <button class="go" type="button" data-go="loaded">Put 20 minutes down</button>
+      <button class="away" type="button" data-go="decision">Not yet</button>
+    </div>
+  </section>
+
+  <!-- 6 ................................................. loaded -->
+  <section class="scene" data-scene="loaded">
+    <p class="line">The table is loaded.</p>
+    <p class="sub">28 hours on one side, 20 minutes on the other. Nothing is settled until the work is done.</p>
+    <div class="acts"><button class="go" type="button" data-go="task">Begin the 20 minutes</button></div>
+  </section>
+
+  <!-- 7 ................................................. the work -->
+  <section class="scene" data-scene="task">
+    <p class="line">Three questions.</p>
+    <p class="sub">No format, no length requirement. A blunt paragraph is worth more than a considered page.</p>
+
+    <form id="wager-form" name="wager-001" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="wager-001">
+      <p class="hp"><label>Leave blank <input name="bot-field"></label></p>
+
+      <div class="q">
+        <label for="q1">Would you have said yes?</label>
+        <textarea id="q1" name="q1_would_you" required></textarea>
+      </div>
+      <div class="q">
+        <label for="q2">If not, what stopped you — and where did you stop reading?</label>
+        <textarea id="q2" name="q2_what_stopped_you"></textarea>
+      </div>
+      <div class="q">
+        <label for="q3">What was missing?</label>
+        <textarea id="q3" name="q3_what_was_missing"></textarea>
+      </div>
+      <div class="q">
+        <label for="who">Your name</label>
+        <input type="text" id="who" name="name" required>
+      </div>
+      <div class="q">
+        <label for="mail">Email</label>
+        <span>So the result reaches you on 23 September. Nothing else is sent.</span>
+        <input type="email" id="mail" name="email" required>
+      </div>
+
+      <button class="go" type="submit">Put it on the table</button>
+      <p class="err" id="task-err"></p>
+    </form>
+  </section>
+
+  <!-- 7b ................................................ submitted -->
+  <section class="scene" data-scene="done">
+    <p class="line">Your 20 minutes are on the table.</p>
+    <p class="sub">Now the table waits. On <time datetime="2026-09-23">23 September</time> you get one email: whether six people came through, what the answers had in common, and what changed because of yours. If it resolves no, the same email says so.</p>
+    <p class="terms">If you want to add anything later, it goes to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>.</p>
+  </section>
+
+  <!-- 8 ................................................. resolution -->
+  <section class="scene" data-scene="closed">
+    <p class="line">The table has closed.</p>
+    <div class="tally">
+      <div><b>15</b><span>invited</span></div>
+      <div><b>—</b><span>sat down</span></div>
+      <div><b>—</b><span>completed</span></div>
+      <div><b>—</b><span>escalated</span></div>
+    </div>
+    <p class="sub">Six or more completed resolves this yes. Five or fewer resolves no, and it is published as no.</p>
+    <p class="terms">In this first experiment the creator is also the person resolving and reporting the result. That is not independent verification and is not presented as such.</p>
+  </section>
 
 </main>
+
+<footer>
+  <b>Stake + Wager</b> — one experiment, run by hand, with a stop condition written before it started
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- the machine -------------------------------------------------
+     Each state owns its copy (in the markup), its available actions,
+     and what happens on the way in. Nothing else reaches into the DOM. */
+
+  var MACHINE = {
+    outside:     { event:"scene_outside" },
+    enter:       { event:"scene_enter",       onEnter:function(){ document.body.classList.add("inside"); } },
+    table:       { event:"scene_table" },
+    proposition: { event:"scene_proposition" },
+    decision:    { event:"scene_decision" },
+    walkaway:    { event:"scene_walkaway" },
+    sit:         { event:"scene_sit" },
+    loaded:      { event:"scene_loaded",      onEnter:function(){ loadYourSide(); } },
+    task:        { event:"scene_task" },
+    done:        { event:"scene_done" },
+    closed:      { event:"scene_closed" }
+  };
+
+  var scenes = {};
+  Array.prototype.forEach.call(document.querySelectorAll(".scene"), function(el){
+    scenes[el.getAttribute("data-scene")] = el;
+  });
+
+  var current = "outside";
+
+  function go(next){
+    if(!MACHINE[next] || !scenes[next] || next === current) return;
+    scenes[current].classList.remove("on");
+    scenes[next].classList.add("on");
+    current = next;
+    if(MACHINE[next].onEnter) MACHINE[next].onEnter();
+    remember(next);
+    window.scrollTo(0,0);
+    var h = scenes[next].querySelector(".line");
+    if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); }
+  }
+
+  /* ---- your side of the table ---- */
+  function loadYourSide(){
+    var pan  = document.getElementById("pan-you");
+    if(!pan) return;
+    pan.classList.remove("waiting");
+    pan.classList.add("loaded");
+    document.getElementById("your-weight").textContent = "20 minutes";
+    document.getElementById("your-note").textContent   = "committed by you";
+    document.getElementById("your-list").innerHTML =
+      "<li>Read the wager</li><li>Answer three questions</li><li>Return it by 18 September</li>";
+  }
+
+  /* ---- remember where they were ---- */
+  function remember(state){
+    try{ localStorage.setItem("sw001", state); }catch(e){}
+  }
+  function resume(){
+    var saved;
+    try{ saved = localStorage.getItem("sw001"); }catch(e){ return; }
+    if(saved === "done"){ document.body.classList.add("inside"); go("done"); }
+    else if(saved === "task" || saved === "loaded"){
+      document.body.classList.add("inside");
+      loadYourSide();
+      go("task");
+    }
+  }
+
+  /* ---- knocking ---- */
+  var knock = document.getElementById("knock");
+  knock.addEventListener("click", function(){
+    knock.disabled = true;
+    knock.classList.add("rapping");
+    setTimeout(function(){ go("enter"); }, 900);
+  });
+
+  /* ---- every other transition ---- */
+  document.addEventListener("click", function(e){
+    var t = e.target.closest("[data-go]");
+    if(!t) return;
+    go(t.getAttribute("data-go"));
+  });
+
+  /* ---- submitting ---- */
+  function encode(form){
+    var data = new FormData(form), out = [];
+    data.forEach(function(v,k){ out.push(encodeURIComponent(k)+"="+encodeURIComponent(v)); });
+    return out.join("&");
+  }
+
+  function wire(formId, errId, after){
+    var form = document.getElementById(formId);
+    if(!form) return;
+    var err  = document.getElementById(errId);
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      err.textContent = "";
+      var btn = form.querySelector("button[type=submit]");
+      btn.disabled = true;
+      var was = btn.textContent;
+      btn.textContent = "Sending";
+      fetch("/", {
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded"},
+        body: encode(form)
+      }).then(function(r){
+        if(!r.ok) throw new Error(r.status);
+        after();
+      }).catch(function(){
+        btn.disabled = false;
+        btn.textContent = was;
+        err.textContent = "That did not send. Email it to joo@stakeandwager.com instead and it counts the same.";
+      });
+    });
+  }
+
+  wire("wager-form","task-err", function(){ go("done"); });
+  wire("pass-form","pass-err", function(){
+    var f = document.getElementById("pass-form");
+    f.innerHTML = "<p class='sub' style='margin:0'>Recorded. Thank you for saying so.</p>";
+  });
+
+  resume();
+})();
+</script>
 </body>
 </html>
