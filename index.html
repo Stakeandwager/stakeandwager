@@ -70,23 +70,248 @@ body.inside #glow{opacity:1}
 .sub{color:var(--lamp-dim);max-width:52ch;margin:18px auto 0;font-size:15.5px}
 .quiet{color:var(--lamp-dim);font-size:14px}
 
-/* ---------- scene 0: outside ---------- */
-#knock{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:132px;height:132px;margin-top:44px;
-  border:1px solid rgba(233,222,198,.28);border-radius:50%;
-  background:transparent;color:var(--lamp);
-  font-family:"Spectral",Georgia,serif;font-size:22px;letter-spacing:.01em;
-  cursor:pointer;transition:border-color .3s ease,background .3s ease;
+/* ---------- scene 0: outside, the door ---------- */
+.bell{
+  font-family:"Spectral",Georgia,serif;font-weight:300;
+  font-size:clamp(21px,4.4vw,29px);line-height:1.25;letter-spacing:-0.015em;
+  color:var(--lamp);margin:0 auto;max-width:18ch;min-height:2.5em;
+  transition:opacity .34s ease;
 }
-#knock:hover{border-color:rgba(233,222,198,.6);background:rgba(233,222,198,.04)}
-#knock:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:4px}
-#knock.rapping{animation:rap .9s ease-in-out}
-@keyframes rap{
-  0%,100%{transform:scale(1)}
-  12%{transform:scale(.955)}  22%{transform:scale(1)}
-  38%{transform:scale(.955)}  48%{transform:scale(1)}
-  64%{transform:scale(.955)}  74%{transform:scale(1)}
+.bell.fading{opacity:0}
+
+.door{
+  position:relative;display:block;
+  width:min(196px,52vw);height:min(310px,78vw);
+  margin:32px auto 0;padding:0;cursor:pointer;
+  border:1px solid rgba(233,222,198,.15);border-radius:3px 3px 0 0;
+  background:linear-gradient(178deg,#0A110E 0%,#0C130F 62%,#0A0F0C 100%);
+  box-shadow:
+    0 0 44px -8px rgba(233,222,198,.14),
+    inset 0 0 70px -26px rgba(233,222,198,.10);
+  transition:box-shadow .5s ease,border-color .5s ease;
+}
+/* the panels */
+.door::before{
+  content:"";position:absolute;left:15px;right:15px;top:16px;bottom:64px;
+  border:1px solid rgba(233,222,198,.10);border-radius:2px;
+}
+/* light under the door */
+.door::after{
+  content:"";position:absolute;left:6%;right:6%;bottom:-2px;height:3px;
+  background:linear-gradient(90deg,transparent,rgba(233,222,198,.6),transparent);
+  filter:blur(1.6px);opacity:.55;transition:opacity .5s ease;
+}
+.door:hover,.door:focus-visible{
+  border-color:rgba(233,222,198,.34);
+  box-shadow:
+    0 0 72px -6px rgba(233,222,198,.26),
+    inset 0 0 80px -22px rgba(233,222,198,.16);
+}
+.door:hover::after,.door:focus-visible::after{opacity:1}
+.door:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:6px}
+
+.door:active{transform:translateY(1px)}
+.door:active .knocker{box-shadow:0 0 22px 0 rgba(199,154,70,.7)}
+.knocker{
+  position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);
+  width:34px;height:34px;border-radius:50%;
+  border:2px solid var(--bronze);
+  box-shadow:0 0 14px -2px rgba(199,154,70,.45);
+}
+.doorword{
+  position:absolute;left:0;right:0;bottom:26px;
+  font-family:"Spectral",Georgia,serif;font-size:17px;letter-spacing:.02em;
+  color:rgba(233,222,198,.62);
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .door{animation:breathe 5s ease-in-out infinite}
+  @keyframes breathe{
+    0%,100%{box-shadow:0 0 40px -10px rgba(233,222,198,.12),inset 0 0 70px -28px rgba(233,222,198,.08)}
+    50%    {box-shadow:0 0 62px -6px rgba(233,222,198,.22),inset 0 0 78px -22px rgba(233,222,198,.14)}
+  }
+  .door.rapping{animation:rap .95s ease-in-out}
+  @keyframes rap{
+    0%,100%{transform:translateX(0)}
+    10%{transform:translateX(-2px)} 18%{transform:translateX(0)}
+    36%{transform:translateX(-2px)} 44%{transform:translateX(0)}
+    62%{transform:translateX(-2px)} 70%{transform:translateX(0)}
+  }
+  .door.rapping::after{animation:flare .95s ease-in-out}
+  @keyframes flare{
+    0%,100%{opacity:.6}
+    12%,40%,66%{opacity:1;filter:blur(3px)}
+  }
+}
+
+/* ---------- the settled table ---------- */
+.room.settled #bloom{opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .scene.on .room.settled #bloom{animation:bloom 2.2s cubic-bezier(.2,.7,.3,1) .25s both}
+  @keyframes bloom{
+    0%{opacity:0;transform:scale(.82)}
+    45%{opacity:1;transform:scale(1.04)}
+    100%{opacity:.75;transform:scale(1)}
+  }
+  .scene.on .room.settled svg{animation:arrive .7s cubic-bezier(.2,.7,.3,1) both}
+}
+@media (prefers-reduced-motion:reduce){.room.settled #bloom{opacity:.75}}
+
+/* ---------- who is on the other side ---------- */
+.handle{
+  border:0;background:transparent;padding:0;cursor:pointer;
+  font-family:inherit;font-size:inherit;color:#E4C88A;
+  border-bottom:1px dotted rgba(228,200,138,.55);
+}
+.handle:hover{color:#F3E2BC;border-bottom-color:rgba(243,226,188,.8)}
+.handle:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
+
+#profile[hidden]{display:none}
+#profile{margin-top:16px}
+#profile dl{margin:14px 0 0;display:grid;grid-template-columns:132px 1fr;gap:9px 18px;font-size:13.5px}
+#profile dt{color:var(--lamp-dim);margin:0}
+#profile dd{margin:0;color:var(--lamp)}
+#profile .who-name{
+  font-family:"Spectral",Georgia,serif;font-size:21px;letter-spacing:-0.015em;
+  color:#F1E7D2;margin:0;
+}
+@media (prefers-reduced-motion:no-preference){
+  #profile{animation:arrive .32s cubic-bezier(.2,.7,.3,1) both}
+}
+@media (max-width:560px){
+  #profile dl{grid-template-columns:1fr;gap:2px 0}
+  #profile dd{margin-bottom:9px}
+}
+
+/* ---------- the room ---------- */
+#lamp{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:min(560px,96vw);height:300px;z-index:0;pointer-events:none;
+  opacity:0;transition:opacity 1.6s ease;
+}
+body.inside #lamp{opacity:1}
+
+.back{
+  position:relative;display:inline-flex;align-items:center;gap:7px;
+  border:0;background:transparent;color:var(--lamp-dim);
+  font-family:inherit;font-size:14px;padding:6px 4px;margin:0 auto 18px;
+  cursor:pointer;
+}
+.back:hover{color:var(--lamp)}
+.back:active{transform:translateY(1px)}
+.back:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
+.back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.backbar{display:flex;justify-content:flex-start}
+
+/* ---------- the drawn table ---------- */
+.room{margin:6px auto 0;max-width:560px}
+.room svg{display:block;width:100%;height:auto}
+#seat-glow{opacity:0;transition:opacity .7s ease}
+.seated-now #seat-glow{opacity:1}
+#seat-stack{opacity:0;transform-origin:center}
+.seated-now #seat-stack{animation:dropIn .6s cubic-bezier(.2,1.1,.35,1) both}
+@keyframes dropIn{
+  0%{opacity:0;transform:translateY(-26px)}
+  62%{opacity:1;transform:translateY(3px)}
+  100%{opacity:1;transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .seated-now #seat-stack{animation:none;opacity:1}
+}
+
+/* ---------- panels, stats, ladder ---------- */
+.panel{
+  border:1px solid rgba(233,222,198,.13);border-radius:3px;
+  padding:24px 22px 26px;margin:26px auto 0;max-width:600px;text-align:left;
+  background:radial-gradient(130% 100% at 50% 0%, rgba(233,222,198,.045), rgba(233,222,198,0) 72%);
+}
+.panel.lit{
+  border-color:rgba(199,154,70,.3);
+  background:radial-gradient(130% 100% at 50% 0%, rgba(199,154,70,.10), rgba(233,222,198,0) 72%);
+}
+.panel > :first-child{margin-top:0}
+.panel > :last-child{margin-bottom:0}
+
+.tag{
+  display:inline-block;font-size:12.5px;letter-spacing:.02em;
+  color:var(--lamp-dim);border:1px solid rgba(233,222,198,.18);
+  border-radius:2px;padding:4px 10px;margin-bottom:14px;
+}
+.tag.lit{color:#E4C88A;border-color:rgba(199,154,70,.45);background:rgba(199,154,70,.10)}
+
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  margin:18px 0 0;text-align:center;
+}
+.stats > div{padding:2px 0}
+.stats svg.ic{width:19px;height:19px;opacity:.75;margin-bottom:7px}
+.stats b{
+  display:block;font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:27px;line-height:1.05;letter-spacing:-0.015em;color:#F1E7D2;
+}
+.stats i{display:block;font-style:normal;font-size:12.5px;color:var(--lamp-dim);margin-top:3px;line-height:1.35}
+
+.said-row{display:flex;gap:11px;align-items:flex-start;margin:16px 0 0}
+.said-row svg.ic{width:19px;height:19px;flex:0 0 19px;margin-top:3px;opacity:.6}
+.said-row p{margin:0}
+
+.verdict-strip{
+  display:flex;gap:10px;align-items:center;margin-top:16px;
+  border:1px solid rgba(233,222,198,.13);border-radius:2px;padding:11px 13px;
+  font-size:13.5px;color:var(--lamp-dim);
+}
+.verdict-strip.lit{border-color:rgba(199,154,70,.36);background:rgba(199,154,70,.09);color:#E4C88A}
+.verdict-strip svg.ic{width:17px;height:17px;flex:0 0 17px}
+
+svg.ic{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* the ladder: where you are in this */
+.ladder{
+  display:none;gap:0;align-items:stretch;
+  margin:34px auto 0;max-width:600px;
+  border:1px solid rgba(233,222,198,.11);border-radius:3px;overflow:hidden;
+}
+body.walking .ladder{display:flex}
+.rung{
+  flex:1;padding:11px 8px;text-align:center;
+  border-right:1px solid rgba(233,222,198,.09);
+  transition:background .4s ease,color .4s ease;
+}
+.rung:last-child{border-right:0}
+.rung b{display:block;font-size:12.5px;font-weight:500;color:var(--lamp-dim);letter-spacing:.01em}
+.rung span{display:block;font-size:11.5px;color:rgba(141,150,141,.62);margin-top:2px;line-height:1.3}
+.rung.here{background:rgba(199,154,70,.12)}
+.rung.here b{color:#E4C88A}
+.rung.here span{color:rgba(228,200,138,.75)}
+.rung.past b{color:rgba(233,222,198,.55)}
+@media (max-width:560px){
+  .rung span{display:none}
+  .rung{padding:10px 4px}
+}
+
+/* ---------- the rule: two tables ---------- */
+.compare{
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;
+  margin:30px auto 0;max-width:660px;
+}
+.plate{
+  border:1px solid rgba(233,222,198,.12);border-radius:3px;
+  padding:18px 18px 20px;text-align:left;
+}
+.plate.lit{
+  border-color:rgba(199,154,70,.34);
+  background:radial-gradient(120% 90% at 50% 34%, rgba(233,222,198,.075), rgba(233,222,198,0) 70%);
+}
+.plate h3{margin:0 0 4px;font-size:15px;font-weight:500;color:var(--lamp)}
+.plate p{margin:0;font-size:13.5px;line-height:1.55;color:var(--lamp-dim)}
+.plate svg{display:block;width:100%;height:auto;margin:6px 0 14px}
+.plate .said{
+  font-family:"Spectral",Georgia,serif;font-size:15px;line-height:1.4;
+  color:var(--lamp);margin:0 0 10px;
+}
+.plate.lit .said{color:#F1E7D2}
+@media (max-width:560px){
+  .compare{grid-template-columns:1fr;gap:14px}
 }
 
 /* ---------- the table ---------- */
@@ -119,6 +344,66 @@ body.inside #glow{opacity:1}
   .pan + .pan{border-left:0;border-top:1px solid var(--table-edge);margin-top:20px;padding-top:20px}
 }
 
+/* ---------- taking a seat ---------- */
+.check{
+  margin:12px 0 0;font-size:12px;line-height:1.5;
+  color:var(--ink-soft);opacity:.85;
+}
+.whose{
+  margin:22px auto 0;max-width:54ch;font-size:14.5px;line-height:1.6;
+  color:var(--lamp-dim);text-align:left;
+  border-left:2px solid var(--bronze);padding-left:14px;
+}
+.seat{
+  margin:26px auto 0;max-width:420px;text-align:left;
+}
+.seated{
+  margin:14px auto 0;font-size:13.5px;color:var(--lamp-dim);
+}
+
+/* ---------- the verdict ---------- */
+.picks{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.pick{
+  flex:1 1 90px;min-width:90px;
+  border:1px solid rgba(233,222,198,.24);border-radius:2px;
+  background:rgba(233,222,198,.04);color:var(--lamp);
+  font-family:"Spectral",Georgia,serif;font-size:19px;letter-spacing:-0.01em;
+  padding:15px 10px;cursor:pointer;
+  transition:border-color .22s ease,background .22s ease,color .22s ease;
+}
+.pick:hover{border-color:rgba(233,222,198,.5);background:rgba(233,222,198,.08)}
+.pick:active{transform:translateY(1px)}
+.pick:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
+.pick.chosen{
+  border-color:var(--bronze-lit);background:rgba(199,154,70,.16);
+  color:#F3E9D4;box-shadow:inset 0 0 22px -12px rgba(199,154,70,.9);
+}
+.q.gone{display:none}
+
+
+/* ---------- weight landing ---------- */
+.table-slot{margin-top:26px}
+.table-slot .table{margin-top:0}
+
+.table.took{animation:takeweight .62s cubic-bezier(.25,.9,.3,1)}
+@keyframes takeweight{
+  0%{transform:translateY(0)}
+  22%{transform:translateY(4px)}
+  55%{transform:translateY(-1px)}
+  100%{transform:translateY(0)}
+}
+.pan.landing .weight{animation:landing .58s cubic-bezier(.2,1.1,.35,1) both}
+@keyframes landing{
+  0%{opacity:0;transform:translateY(-22px) scale(1.06)}
+  62%{opacity:1;transform:translateY(2px) scale(.99)}
+  100%{opacity:1;transform:none}
+}
+.pan.landing .note,.pan.landing li{animation:settleIn .5s ease .18s both}
+@keyframes settleIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .table.took,.pan.landing .weight,.pan.landing .note,.pan.landing li{animation:none}
+}
+
 /* ---------- actions ---------- */
 .acts{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .go{
@@ -127,6 +412,7 @@ body.inside #glow{opacity:1}
   transition:background .25s ease;
 }
 .go:hover{background:#fff}
+.go:active{transform:translateY(1px)}
 .go:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
 .away{
   border:0;background:transparent;color:var(--lamp-dim);
@@ -134,6 +420,7 @@ body.inside #glow{opacity:1}
   text-underline-offset:3px;
 }
 .away:hover{color:var(--lamp)}
+.away:active{transform:translateY(1px)}
 .away:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
 
 /* ---------- the work ---------- */
@@ -174,35 +461,184 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </head>
 <body>
 <div id="glow"></div>
+<svg id="lamp" viewBox="0 0 560 300" aria-hidden="true">
+  <defs>
+    <linearGradient id="cone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E9DEC6" stop-opacity=".16"/>
+      <stop offset="55%" stop-color="#E9DEC6" stop-opacity=".05"/>
+      <stop offset="100%" stop-color="#E9DEC6" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="bulb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF3D8" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#FFF3D8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path d="M280 0 v34" stroke="rgba(233,222,198,.22)" stroke-width="1.2"/>
+  <path d="M258 56 h44 l16 -22 h-76z" fill="#1B241F" stroke="rgba(233,222,198,.22)" stroke-width="1"/>
+  <ellipse cx="280" cy="56" rx="22" ry="5" fill="#C79A46" opacity=".5"/>
+  <ellipse cx="280" cy="60" rx="52" ry="26" fill="url(#bulb)"/>
+  <path d="M280 58 L120 300 H440 Z" fill="url(#cone)"/>
+</svg>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-hand" viewBox="0 0 24 24"><path d="M6 12V7a1.6 1.6 0 0 1 3.2 0v4"/><path d="M9.2 11V5.4a1.6 1.6 0 0 1 3.2 0V11"/><path d="M12.4 11V6.6a1.6 1.6 0 0 1 3.2 0V13"/><path d="M15.6 13v-1a1.6 1.6 0 0 1 3.2 0v4a5 5 0 0 1-5 5h-2a6 6 0 0 1-5.8-4.4L6 15"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.4 12.2l2.5 2.5 4.7-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.2l5.6 5.6M14.8 9.2l-5.6 5.6"/></symbol>
+<symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.4"/><path d="M5.6 19.4a6.4 6.4 0 0 1 12.8 0"/></symbol>
+<symbol id="i-chair" viewBox="0 0 24 24"><path d="M7 4v8M17 4v8M6 12h12M8 12v7M16 12v7M8 16h8"/></symbol>
+</defs></svg>
+
 
 <main id="stage">
 
   <!-- 0 ................................................. outside -->
   <section class="scene on" data-scene="outside">
-    <p class="line">There is a table inside.</p>
-    <button id="knock" type="button">Knock</button>
+    <p class="bell" id="bell">You got 20 minutes?</p>
+    <button class="door" id="knock" type="button" aria-label="Knock on the door">
+      <span class="knocker"></span>
+      <span class="doorword">Knock</span>
+    </button>
   </section>
 
   <!-- 1 ................................................. the door opens -->
   <section class="scene" data-scene="enter">
     <p class="line">A table cannot be opened empty.</p>
-    <div class="acts"><button class="go" type="button" data-go="table">Go on</button></div>
+    <div class="acts"><button class="go" type="button" data-go="rule">Go on</button></div>
+  </section>
+
+  <!-- 1b ................................................ the rule, shown -->
+  <section class="scene" data-scene="rule">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
+    <p class="line" style="font-size:clamp(22px,4.4vw,30px);max-width:26ch">Before you ask anyone to commit, you commit first.</p>
+
+    <div class="compare">
+      <div class="plate">
+        <svg viewBox="0 0 240 168" role="img" aria-label="A bare table with nothing on it">
+          <ellipse cx="120" cy="150" rx="62" ry="9" fill="rgba(0,0,0,.35)"/>
+          <path d="M112 96 h16 v44 h-16z" fill="none" stroke="rgba(141,150,141,.45)" stroke-width="1.4"/>
+          <ellipse cx="120" cy="142" rx="34" ry="7" fill="none" stroke="rgba(141,150,141,.45)" stroke-width="1.4"/>
+          <ellipse cx="120" cy="92" rx="92" ry="21" fill="none" stroke="rgba(141,150,141,.5)" stroke-width="1.4"/>
+          <path d="M28 92 v7 a92 21 0 0 0 184 0 v-7" fill="none" stroke="rgba(141,150,141,.5)" stroke-width="1.4"/>
+        </svg>
+        <div class="said-row"><svg class="ic"><use href="#i-person"/></svg>
+          <p class="said">&ldquo;I have an idea. What do you think?&rdquo;</p></div>
+        <h3 style="margin-top:14px">Nothing on it</h3>
+        <p>Easy to ask. Easy to ignore. No way to tell whether anyone means it.</p>
+        <div class="verdict-strip"><svg class="ic"><use href="#i-x"/></svg>No commitment, so no signal.</div>
+      </div>
+
+      <div class="plate lit">
+        <svg viewBox="0 0 240 168" role="img" aria-label="A table with twenty-eight hours on it">
+          <ellipse cx="120" cy="152" rx="66" ry="10" fill="rgba(0,0,0,.5)"/>
+          <path d="M112 96 h16 v44 h-16z" fill="#4A3C24"/>
+          <ellipse cx="120" cy="142" rx="34" ry="7" fill="#5A4A2C"/>
+          <path d="M28 90 v8 a92 21 0 0 0 184 0 v-8z" fill="#7A6540"/>
+          <ellipse cx="120" cy="90" rx="92" ry="21" fill="#C6B491"/>
+          <ellipse cx="120" cy="90" rx="92" ry="21" fill="url(#sheen)"/>
+          <defs>
+            <radialGradient id="sheen" cx="50%" cy="28%" r="70%">
+              <stop offset="0%" stop-color="#F0E4C8" stop-opacity=".85"/>
+              <stop offset="100%" stop-color="#C6B491" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- the weight -->
+          <ellipse cx="88" cy="86" rx="30" ry="7" fill="rgba(60,44,20,.4)"/>
+          <path d="M60 78 a28 6.5 0 0 0 56 0 v-7 a28 6.5 0 0 0 -56 0z" fill="#7D5F2C"/>
+          <ellipse cx="88" cy="71" rx="28" ry="6.5" fill="#A8823C"/>
+          <path d="M63 66 a25 5.8 0 0 0 50 0 v-6 a25 5.8 0 0 0 -50 0z" fill="#7D5F2C"/>
+          <ellipse cx="88" cy="60" rx="25" ry="5.8" fill="#B99048"/>
+          <path d="M67 55 a21 5 0 0 0 42 0 v-6 a21 5 0 0 0 -42 0z" fill="#7D5F2C"/>
+          <ellipse cx="88" cy="49" rx="21" ry="5" fill="#C79A46"/>
+          <!-- the card -->
+          <path d="M138 86 l58 -6 v-30 l-58 6z" fill="#EFE6D2"/>
+          <path d="M138 86 v-30 l-6 -4 v30z" fill="#D6CBB2"/>
+          <g stroke="#8C8471" stroke-width="1.2" stroke-linecap="round">
+            <path d="M146 71 l42 -4"/><path d="M146 77 l42 -4"/><path d="M146 65 l24 -2"/>
+          </g>
+        </svg>
+        <div class="stats">
+          <div><svg class="ic"><use href="#i-clock"/></svg><b>17</b><i>months carried</i></div>
+          <div><svg class="ic"><use href="#i-hand"/></svg><b>15</b><i>approaches by hand</i></div>
+          <div><svg class="ic"><use href="#i-check"/></svg><b>1</b><i>result, published either way</i></div>
+        </div>
+        <div class="said-row"><svg class="ic"><use href="#i-person"/></svg>
+          <p class="said">&ldquo;I have put 17 months into this. Will you put 20 minutes behind it?&rdquo;</p></div>
+        <h3 style="margin-top:14px">Something on it</h3>
+        <p>Now there is a cost on one side. That is what makes the question worth answering.</p>
+        <div class="verdict-strip lit"><svg class="ic"><use href="#i-check"/></svg>Commitment is the signal. It is what invites an answer.</div>
+      </div>
+    </div>
+
+    <div class="acts"><button class="go" type="button" data-go="table">See the table</button></div>
   </section>
 
   <!-- 2 ................................................. the table -->
   <section class="scene" data-scene="table">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
+    <div class="room" id="room">
+      <svg viewBox="0 0 560 250" role="img" aria-label="A lit table with weight on one side and an empty place on the other">
+        <defs>
+          <radialGradient id="topsheen" cx="50%" cy="26%" r="72%">
+            <stop offset="0%" stop-color="#F2E7CB" stop-opacity=".9"/>
+            <stop offset="100%" stop-color="#C2B08C" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="seatglow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C79A46" stop-opacity=".55"/>
+            <stop offset="100%" stop-color="#C79A46" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- chairs -->
+        <g stroke="#3A4B42" stroke-width="3" stroke-linecap="round" fill="none">
+          <path d="M104 74 v34 M172 74 v34 M104 84 h68 M104 96 h68"/>
+          <path d="M388 74 v34 M456 74 v34 M388 84 h68 M388 96 h68"/>
+        </g>
+
+        <!-- table -->
+        <ellipse cx="280" cy="212" rx="150" ry="20" fill="rgba(0,0,0,.45)"/>
+        <path d="M264 150 h32 v52 h-32z" fill="#4A3C24"/>
+        <ellipse cx="280" cy="202" rx="58" ry="11" fill="#5A4A2C"/>
+        <path d="M60 138 v13 a220 46 0 0 0 440 0 v-13z" fill="#6E5B39"/>
+        <ellipse cx="280" cy="138" rx="220" ry="46" fill="#BFAD8A"/>
+        <ellipse cx="280" cy="138" rx="220" ry="46" fill="url(#topsheen)"/>
+        <ellipse cx="280" cy="138" rx="196" ry="38" fill="none" stroke="rgba(90,74,44,.35)" stroke-width="1.2"/>
+
+        <!-- his side: the weight -->
+        <ellipse cx="168" cy="140" rx="46" ry="11" fill="rgba(60,44,20,.42)"/>
+        <path d="M126 130 a42 10 0 0 0 84 0 v-9 a42 10 0 0 0 -84 0z" fill="#7D5F2C"/>
+        <ellipse cx="168" cy="121" rx="42" ry="10" fill="#A8823C"/>
+        <path d="M130 114 a38 9 0 0 0 76 0 v-9 a38 9 0 0 0 -76 0z" fill="#7D5F2C"/>
+        <ellipse cx="168" cy="105" rx="38" ry="9" fill="#B99048"/>
+        <path d="M135 98 a33 8 0 0 0 66 0 v-9 a33 8 0 0 0 -66 0z" fill="#7D5F2C"/>
+        <ellipse cx="168" cy="89" rx="33" ry="8" fill="#C79A46"/>
+
+        <!-- your side: an empty place, then yours -->
+        <ellipse id="seat-glow" cx="392" cy="132" rx="72" ry="26" fill="url(#seatglow)"/>
+        <ellipse cx="392" cy="136" rx="46" ry="12" fill="none"
+                 stroke="rgba(90,74,44,.5)" stroke-width="1.4" stroke-dasharray="5 6"/>
+        <g id="seat-stack">
+          <ellipse cx="392" cy="136" rx="40" ry="10" fill="rgba(60,44,20,.4)"/>
+          <path d="M356 130 a36 9 0 0 0 72 0 v-8 a36 9 0 0 0 -72 0z" fill="#7D5F2C"/>
+          <ellipse cx="392" cy="122" rx="36" ry="9" fill="#C79A46"/>
+        </g>
+      </svg>
+    </div>
+
     <div class="table">
       <div class="pans">
         <div class="pan loaded">
           <h2>Already on the table</h2>
-          <span class="weight">28 hours</span>
-          <span class="note">committed by the creator</span>
+          <span class="weight">17 months</span>
+          <span class="note">carried before anyone was asked</span>
           <div class="bar"><i></i></div>
           <ul>
-            <li>A written brief</li>
-            <li>Fifteen approaches by hand</li>
+            <li>The domain held since April 2025</li>
+            <li>28 hours on this, over fourteen days</li>
+            <li>Fifteen approaches made by hand</li>
             <li>The result published either way</li>
           </ul>
+          <p class="check">The registration date is public. You can check it yourself.</p>
         </div>
         <div class="pan waiting" id="pan-you">
           <h2>Your side</h2>
@@ -218,15 +654,31 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   <!-- 3 ................................................. the proposition -->
   <section class="scene" data-scene="proposition">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="quiet">Wager 001</p>
     <p class="line" style="margin-top:14px">Would you put 20 minutes behind a stranger's idea?</p>
-    <p class="sub">Most people say yes in principle and no in practice. This page is the test.</p>
+    <div class="panel">
+      <span class="tag">The proposition</span>
+      <p style="margin:0 0 14px">Most people say yes to that in principle and no in practice. This page is the test.</p>
+      <div class="stats">
+        <div><svg class="ic"><use href="#i-clock"/></svg><b>20</b><i>minutes asked of you</i></div>
+        <div><svg class="ic"><use href="#i-hand"/></svg><b>3</b><i>questions to answer</i></div>
+        <div><svg class="ic"><use href="#i-check"/></svg><b>18 Sep</b><i>the day it is due</i></div>
+      </div>
+    </div>
     <div class="acts"><button class="go" type="button" data-go="decision">Continue</button></div>
   </section>
 
   <!-- 4 ................................................. the decision -->
   <section class="scene" data-scene="decision">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">Someone has put something down. Now it is your turn to decide.</p>
+    <div class="panel">
+      <div class="said-row"><svg class="ic"><use href="#i-chair"/></svg>
+        <p><b style="color:var(--lamp);font-weight:500">Sit at the table.</b> Twenty minutes, once. You answer three questions and get the result on 23 September.</p></div>
+      <div class="said-row" style="margin-top:14px"><svg class="ic"><use href="#i-x"/></svg>
+        <p><b style="color:var(--lamp);font-weight:500">Walk away.</b> Also a real answer. One line on why is worth as much to this as a yes.</p></div>
+    </div>
     <div class="acts">
       <button class="go" type="button" data-go="sit">Sit at the table</button>
       <button class="away" type="button" data-go="walkaway">Walk away</button>
@@ -235,6 +687,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   <!-- 4b ................................................ walk away -->
   <section class="scene" data-scene="walkaway">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">Walking away is a real answer.</p>
     <p class="sub">It is worth as much to this experiment as sitting down, but only if I know why. One line is plenty.</p>
     <form id="pass-form" name="wager-001-pass" method="POST" data-netlify="true" netlify-honeypot="bot-field">
@@ -256,52 +709,94 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   <!-- 5 ................................................. sit down -->
   <section class="scene" data-scene="sit">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">You are at the table.</p>
     <p class="sub">You haven't put anything down yet. What is being asked is 20 minutes: read the wager, answer three questions, send it back by <time datetime="2026-09-18">18 September</time>.</p>
+
+    <div class="panel lit" style="text-align:center;padding:18px 22px 20px">
+      <div class="stats" style="margin:0">
+        <div><svg class="ic"><use href="#i-clock"/></svg><b>17</b><i>months on the table</i></div>
+        <div><svg class="ic"><use href="#i-chair"/></svg><b>1</b><i>seat, yours</i></div>
+        <div><svg class="ic"><use href="#i-clock"/></svg><b>20</b><i>minutes asked</i></div>
+      </div>
+    </div>
+
+    <p class="whose">The 17 months belong to <button class="handle" id="who-btn" type="button" aria-expanded="false" aria-controls="profile">@joo</button>. Still a stranger, unless you want to know who is on the other side of the table.</p>
+
+    <div class="panel" id="profile" hidden>
+      <p class="who-name">John Obidinma Okoli</p>
+      <dl>
+        <dt>What he does</dt><dd>A developer.</dd>
+        <dt>On the table</dt><dd>17 months carried, 28 hours over the next fourteen days, and this page.</dd>
+        <dt>Since</dt><dd>The domain was registered 8 April 2025. The idea is older. The date is public, so you can check it rather than take his word.</dd>
+        <dt>If it fails</dt><dd>If nobody comes back without being asked, he runs one more cohort with a different framing, then stops. That was written down before any of this was sent.</dd>
+      </dl>
+    </div>
+
+    <div class="seat">
+      <div class="q">
+        <label for="who">What should I call you?</label>
+        <span>A name or a handle. This is what appears if the result names you — and it only does that if you say it can.</span>
+        <input type="text" id="who" autocomplete="nickname" placeholder="e.g. Sara, or sara_k" required>
+      </div>
+      <div class="q">
+        <label for="mail">Email</label>
+        <span>One message, on 23 September, with the result. Nothing else, ever.</span>
+        <input type="email" id="mail" autocomplete="email" required>
+      </div>
+      <p class="err" id="seat-err"></p>
+    </div>
+
     <p class="terms">Given voluntarily. I may use what you send in the project however I like. No ownership, payment, or further obligation is implied on either side. Your name appears on the published result only if you say it can.</p>
     <div class="acts">
-      <button class="go" type="button" data-go="loaded">Put 20 minutes down</button>
+      <button class="go" id="take-seat" type="button">Put 20 minutes down</button>
       <button class="away" type="button" data-go="decision">Not yet</button>
     </div>
   </section>
 
   <!-- 6 ................................................. loaded -->
   <section class="scene" data-scene="loaded">
-    <p class="line">The table is loaded.</p>
-    <p class="sub">28 hours on one side, 20 minutes on the other. Nothing is settled until the work is done.</p>
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
+    <p class="line" id="loaded-line">The table is loaded.</p>
+    <div class="table-slot" id="table-slot"></div>
+    <p class="sub">17 months on one side, 20 minutes on the other. Nothing is settled until the work is done.</p>
     <div class="acts"><button class="go" type="button" data-go="task">Begin the 20 minutes</button></div>
   </section>
 
   <!-- 7 ................................................. the work -->
   <section class="scene" data-scene="task">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">Three questions.</p>
-    <p class="sub">No format, no length requirement. A blunt paragraph is worth more than a considered page.</p>
+    <p class="sub">The first is one tap. The other two are the actual twenty minutes — a blunt paragraph is worth more than a considered page.</p>
+    <p class="seated" id="seated"></p>
 
     <form id="wager-form" name="wager-001" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="wager-001">
       <p class="hp"><label>Leave blank <input name="bot-field"></label></p>
 
       <div class="q">
-        <label for="q1">Would you have said yes?</label>
-        <textarea id="q1" name="q1_would_you" required></textarea>
+        <label id="q1-label">Would you have said yes?</label>
+        <div class="picks" role="group" aria-labelledby="q1-label">
+          <button class="pick" type="button" data-pick="Yes">Yes</button>
+          <button class="pick" type="button" data-pick="Almost">Almost</button>
+          <button class="pick" type="button" data-pick="No">No</button>
+        </div>
+        <input type="hidden" id="q1" name="q1_would_you">
       </div>
-      <div class="q">
-        <label for="q2">If not, what stopped you — and where did you stop reading?</label>
-        <textarea id="q2" name="q2_what_stopped_you"></textarea>
+
+      <div class="q gone" id="q2-block">
+        <label for="q2">Where exactly did you stop?</label>
+        <span>The line, the scene, or the moment you lost the thread.</span>
+        <textarea id="q2" name="q2_where_you_stopped"></textarea>
       </div>
+
       <div class="q">
         <label for="q3">What was missing?</label>
-        <textarea id="q3" name="q3_what_was_missing"></textarea>
+        <textarea id="q3" name="q3_what_was_missing" required></textarea>
       </div>
-      <div class="q">
-        <label for="who">Your name</label>
-        <input type="text" id="who" name="name" required>
-      </div>
-      <div class="q">
-        <label for="mail">Email</label>
-        <span>So the result reaches you on 23 September. Nothing else is sent.</span>
-        <input type="email" id="mail" name="email" required>
-      </div>
+
+      <input type="hidden" id="carry-name" name="name">
+      <input type="hidden" id="carry-mail" name="email">
 
       <button class="go" type="submit">Put it on the table</button>
       <p class="err" id="task-err"></p>
@@ -310,9 +805,67 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   <!-- 7b ................................................ submitted -->
   <section class="scene" data-scene="done">
-    <p class="line">Your 20 minutes are on the table.</p>
-    <p class="sub">Now the table waits. On <time datetime="2026-09-23">23 September</time> you get one email: whether six people came through, what the answers had in common, and what changed because of yours. If it resolves no, the same email says so.</p>
-    <p class="terms">If you want to add anything later, it goes to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>.</p>
+    <p class="line">Both sides are loaded.</p>
+
+    <div class="room settled">
+      <svg viewBox="0 0 560 250" role="img" aria-label="The table with weight on both sides">
+        <defs>
+          <radialGradient id="d-sheen" cx="50%" cy="24%" r="74%">
+            <stop offset="0%" stop-color="#FBF0D6" stop-opacity=".95"/>
+            <stop offset="100%" stop-color="#C2B08C" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="d-bloom" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#E9DEC6" stop-opacity=".30"/>
+            <stop offset="100%" stop-color="#E9DEC6" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <ellipse id="bloom" cx="280" cy="120" rx="280" ry="130" fill="url(#d-bloom)"/>
+
+        <g stroke="#4A5F54" stroke-width="3" stroke-linecap="round" fill="none">
+          <path d="M104 74 v34 M172 74 v34 M104 84 h68 M104 96 h68"/>
+          <path d="M388 74 v34 M456 74 v34 M388 84 h68 M388 96 h68"/>
+        </g>
+
+        <ellipse cx="280" cy="212" rx="150" ry="20" fill="rgba(0,0,0,.45)"/>
+        <path d="M264 150 h32 v52 h-32z" fill="#4A3C24"/>
+        <ellipse cx="280" cy="202" rx="58" ry="11" fill="#5A4A2C"/>
+        <path d="M60 138 v13 a220 46 0 0 0 440 0 v-13z" fill="#6E5B39"/>
+        <ellipse cx="280" cy="138" rx="220" ry="46" fill="#C6B491"/>
+        <ellipse cx="280" cy="138" rx="220" ry="46" fill="url(#d-sheen)"/>
+        <ellipse cx="280" cy="138" rx="196" ry="38" fill="none" stroke="rgba(90,74,44,.35)" stroke-width="1.2"/>
+
+        <!-- his side -->
+        <ellipse cx="168" cy="140" rx="46" ry="11" fill="rgba(60,44,20,.42)"/>
+        <path d="M126 130 a42 10 0 0 0 84 0 v-9 a42 10 0 0 0 -84 0z" fill="#7D5F2C"/>
+        <ellipse cx="168" cy="121" rx="42" ry="10" fill="#A8823C"/>
+        <path d="M130 114 a38 9 0 0 0 76 0 v-9 a38 9 0 0 0 -76 0z" fill="#7D5F2C"/>
+        <ellipse cx="168" cy="105" rx="38" ry="9" fill="#B99048"/>
+        <path d="M135 98 a33 8 0 0 0 66 0 v-9 a33 8 0 0 0 -66 0z" fill="#7D5F2C"/>
+        <ellipse cx="168" cy="89" rx="33" ry="8" fill="#C79A46"/>
+
+        <!-- your side -->
+        <ellipse cx="392" cy="140" rx="42" ry="10" fill="rgba(60,44,20,.42)"/>
+        <path d="M354 131 a38 9 0 0 0 76 0 v-8 a38 9 0 0 0 -76 0z" fill="#7D5F2C"/>
+        <ellipse cx="392" cy="123" rx="38" ry="9" fill="#B99048"/>
+        <path d="M358 116 a34 8 0 0 0 68 0 v-8 a34 8 0 0 0 -68 0z" fill="#7D5F2C"/>
+        <ellipse cx="392" cy="108" rx="34" ry="8" fill="#C79A46"/>
+      </svg>
+    </div>
+
+    <div class="panel lit">
+      <span class="tag lit">Recorded</span>
+      <p style="margin:0 0 4px"><span class="handle" id="done-who" style="cursor:default;border-bottom-style:solid">You</span> put 20 minutes down against <span class="handle" style="cursor:default;border-bottom-style:solid">@joo</span>'s 17 months.</p>
+      <div class="stats">
+        <div><svg class="ic"><use href="#i-check"/></svg><b>Down</b><i>your side is loaded</i></div>
+        <div><svg class="ic"><use href="#i-clock"/></svg><b>23 Sep</b><i>the result reaches you</i></div>
+        <div><svg class="ic"><use href="#i-hand"/></svg><b>1 of 15</b><i>approaches answered</i></div>
+      </div>
+      <div class="verdict-strip lit" style="margin-top:18px"><svg class="ic"><use href="#i-check"/></svg>Now the table waits. Reality answers on the date, not before.</div>
+    </div>
+
+    <p class="sub">One email on <time datetime="2026-09-23">23 September</time>: whether six people came through, what the answers had in common, and what changed because of yours. If it resolves no, the same email says so.</p>
+    <p class="terms">Anything you want to add later goes to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>. If it is something you will actually do rather than something you might, say so plainly — that is the part being measured.</p>
   </section>
 
   <!-- 8 ................................................. resolution -->
@@ -328,10 +881,18 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <p class="terms">In this first experiment the creator is also the person resolving and reporting the result. That is not independent verification and is not presented as such.</p>
   </section>
 
+
+  <div class="ladder" id="ladder" aria-label="Where you are">
+    <div class="rung" data-rung="interest"><b>Interest</b><span>I like the idea</span></div>
+    <div class="rung" data-rung="wager"><b>Wager</b><span>I'll give 20 minutes</span></div>
+    <div class="rung" data-rung="contribution"><b>Contribution</b><span>I answered</span></div>
+    <div class="rung" data-rung="stake"><b>Stake</b><span>I stand behind it</span></div>
+  </div>
+
 </main>
 
 <footer>
-  <b>Stake + Wager</b> — one experiment, run by hand, with a stop condition written before it started
+  No money changes hands on outcomes.
 </footer>
 
 <script>
@@ -345,6 +906,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   var MACHINE = {
     outside:     { event:"scene_outside" },
     enter:       { event:"scene_enter",       onEnter:function(){ document.body.classList.add("inside"); } },
+    rule:        { event:"scene_rule" },
     table:       { event:"scene_table" },
     proposition: { event:"scene_proposition" },
     decision:    { event:"scene_decision" },
@@ -362,29 +924,82 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   });
 
   var current = "outside";
+  var trail   = [];
 
-  function go(next){
+  function go(next, returning){
+    if(!returning && MACHINE[next] && next !== current) trail.push(current);
+    step(next);
+  }
+
+  function back(){
+    var prev = trail.pop();
+    if(prev) step(prev);
+  }
+
+  function step(next){
     if(!MACHINE[next] || !scenes[next] || next === current) return;
     scenes[current].classList.remove("on");
     scenes[next].classList.add("on");
     current = next;
     if(MACHINE[next].onEnter) MACHINE[next].onEnter();
+    ladderTo(next);
     remember(next);
     window.scrollTo(0,0);
     var h = scenes[next].querySelector(".line");
     if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); }
   }
 
+  /* ---- the ladder: where they are ---- */
+  var RUNG = {
+    outside:null, enter:null,
+    rule:"interest", table:"interest", proposition:"interest",
+    decision:"interest", walkaway:"interest",
+    sit:"wager", loaded:"wager",
+    task:"contribution",
+    done:"stake", closed:"stake"
+  };
+  var ORDER = ["interest","wager","contribution","stake"];
+
+  function ladderTo(state){
+    var at = RUNG[state];
+    document.body.classList.toggle("walking", !!at);
+    if(!at) return;
+    var i = ORDER.indexOf(at);
+    Array.prototype.forEach.call(document.querySelectorAll(".rung"), function(r,n){
+      r.classList.toggle("here", n === i);
+      r.classList.toggle("past", n < i);
+    });
+  }
+
   /* ---- your side of the table ---- */
-  function loadYourSide(){
-    var pan  = document.getElementById("pan-you");
-    if(!pan) return;
+  function loadYourSide(animate){
+    var pan   = document.getElementById("pan-you");
+    var tbl   = document.querySelector(".table");
+    var slot  = document.getElementById("table-slot");
+    if(!pan || !tbl) return;
+
+    /* carry the same table through, so it reads as one object */
+    if(slot && tbl.parentNode !== slot){
+      var rm = document.getElementById("room");
+      if(rm) slot.appendChild(rm);
+      slot.appendChild(tbl);
+    }
+
     pan.classList.remove("waiting");
     pan.classList.add("loaded");
+    var room = document.getElementById("room");
+    if(room) room.classList.add("seated-now");
     document.getElementById("your-weight").textContent = "20 minutes";
     document.getElementById("your-note").textContent   = "committed by you";
     document.getElementById("your-list").innerHTML =
       "<li>Read the wager</li><li>Answer three questions</li><li>Return it by 18 September</li>";
+
+    if(animate === false) return;
+    /* the weight lands, and the table takes it */
+    pan.classList.remove("landing"); tbl.classList.remove("took");
+    void pan.offsetWidth;
+    pan.classList.add("landing");
+    setTimeout(function(){ tbl.classList.add("took"); }, 210);
   }
 
   /* ---- remember where they were ---- */
@@ -394,24 +1009,80 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   function resume(){
     var saved;
     try{ saved = localStorage.getItem("sw001"); }catch(e){ return; }
+    try{
+      var n = localStorage.getItem("sw001name"), m = localStorage.getItem("sw001mail");
+      if(n && m){
+        document.getElementById("carry-name").value = n;
+        document.getElementById("carry-mail").value = m;
+        var tag = "@" + n.trim().split(/\s+/)[0];
+    document.getElementById("seated").innerHTML =
+      '<span class="handle" style="cursor:default;border-bottom-style:solid">' + tag.replace(/[<>&]/g,"") + '</span> is at the table.';
+    var dl = document.getElementById("done-who");
+    if(dl) dl.textContent = tag;
+    document.getElementById("loaded-line").textContent =
+      "The table is loaded, " + n.trim().split(/\s+/)[0] + ".";
+        if(seatName) seatName.value = n;
+        if(seatMail) seatMail.value = m;
+      }
+    }catch(e){}
     if(saved === "done"){ document.body.classList.add("inside"); go("done"); }
     else if(saved === "task" || saved === "loaded"){
       document.body.classList.add("inside");
-      loadYourSide();
+      loadYourSide(false);
       go("task");
     }
   }
 
-  /* ---- knocking ---- */
+  /* ---- the bellboy at the door ---- */
+  var LINES = [
+    "You got 20 minutes?",
+    "There's a table you weren't invited to.",
+    "Someone put 28 hours down. Your turn.",
+    "I don't want your money. I want your judgment.",
+    "You can judge it from the doorway.",
+    "Or you can sit down.",
+    "You can walk away. That's the game.",
+    "What's your judgment worth?",
+    "Want to see what's on the table?",
+    "Knock. See what's inside."
+  ];
+
+  var bell = document.getElementById("bell");
   var knock = document.getElementById("knock");
+  var li = 0, swapping = false, idle;
+
+  function say(){
+    if(swapping || current !== "outside") return;
+    swapping = true;
+    bell.classList.add("fading");
+    setTimeout(function(){
+      li = (li + 1) % LINES.length;
+      bell.textContent = LINES[li];
+      bell.classList.remove("fading");
+      swapping = false;
+    }, 340);
+  }
+
+  /* he speaks when you come near, and again if you linger */
+  knock.addEventListener("mouseenter", say);
+  knock.addEventListener("focus", say);
+  function idleTalk(){
+    idle = setTimeout(function(){ say(); idleTalk(); }, 5200);
+  }
+  idleTalk();
+
+  /* ---- knocking ---- */
   knock.addEventListener("click", function(){
+    clearTimeout(idle);
     knock.disabled = true;
     knock.classList.add("rapping");
-    setTimeout(function(){ go("enter"); }, 900);
+    setTimeout(function(){ go("enter"); }, 950);
   });
 
   /* ---- every other transition ---- */
   document.addEventListener("click", function(e){
+    var b = e.target.closest("[data-back]");
+    if(b){ back(); return; }
     var t = e.target.closest("[data-go]");
     if(!t) return;
     go(t.getAttribute("data-go"));
@@ -449,6 +1120,77 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       });
     });
   }
+
+  /* ---- taking a seat: identity is the first thing put down ---- */
+  var seatName = document.getElementById("who");
+  var seatMail = document.getElementById("mail");
+  var seatErr  = document.getElementById("seat-err");
+  var seatBtn  = document.getElementById("take-seat");
+  var sitter   = {name:"", email:""};
+
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  seatBtn.addEventListener("click", function(){
+    var n = seatName.value.trim(), m = seatMail.value.trim();
+    if(!n){ seatErr.textContent = "Something to call you, so the commitment has someone behind it."; seatName.focus(); return; }
+    if(!validEmail(m)){ seatErr.textContent = "An email, so the result can reach you on 23 September."; seatMail.focus(); return; }
+    seatErr.textContent = "";
+    sitter.name = n; sitter.email = m;
+    document.getElementById("carry-name").value = n;
+    document.getElementById("carry-mail").value = m;
+    var tag = "@" + n.trim().split(/\s+/)[0];
+    document.getElementById("seated").innerHTML =
+      '<span class="handle" style="cursor:default;border-bottom-style:solid">' + tag.replace(/[<>&]/g,"") + '</span> is at the table.';
+    var dl = document.getElementById("done-who");
+    if(dl) dl.textContent = tag;
+    document.getElementById("loaded-line").textContent =
+      "The table is loaded, " + n.trim().split(/\s+/)[0] + ".";
+    try{ localStorage.setItem("sw001name", n); localStorage.setItem("sw001mail", m); }catch(e){}
+    go("loaded");
+  });
+
+  /* ---- who is on the other side ---- */
+  var whoBtn = document.getElementById("who-btn");
+  var profile = document.getElementById("profile");
+  if(whoBtn && profile){
+    whoBtn.addEventListener("click", function(){
+      var opening = profile.hasAttribute("hidden");
+      if(opening){ profile.removeAttribute("hidden"); }
+      else{ profile.setAttribute("hidden",""); }
+      whoBtn.setAttribute("aria-expanded", String(opening));
+    });
+  }
+
+  /* ---- the verdict: one tap, and question two only if it applies ---- */
+  var verdict = document.getElementById("q1");
+  var q2block = document.getElementById("q2-block");
+  Array.prototype.forEach.call(document.querySelectorAll(".pick"), function(b){
+    b.addEventListener("click", function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".pick"), function(o){
+        o.classList.remove("chosen");
+        o.setAttribute("aria-pressed","false");
+      });
+      b.classList.add("chosen");
+      b.setAttribute("aria-pressed","true");
+      verdict.value = b.getAttribute("data-pick");
+      if(verdict.value === "Yes"){
+        q2block.classList.add("gone");
+        document.getElementById("q2").value = "";
+      }else{
+        q2block.classList.remove("gone");
+      }
+      document.getElementById("task-err").textContent = "";
+    });
+  });
+
+  document.getElementById("wager-form").addEventListener("submit", function(e){
+    if(!verdict.value){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      document.getElementById("task-err").textContent = "Pick one first: yes, almost, or no.";
+      document.querySelector(".pick").focus();
+    }
+  }, true);
 
   wire("wager-form","task-err", function(){ go("done"); });
   wire("pass-form","pass-err", function(){
