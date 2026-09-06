@@ -268,10 +268,13 @@ svg.ic{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;strok
 /* the ladder: where you are in this */
 .ladder{
   display:none;gap:0;align-items:stretch;
-  margin:34px auto 0;max-width:600px;
-  border:1px solid rgba(233,222,198,.11);border-radius:3px;overflow:hidden;
+  position:fixed;left:50%;transform:translateX(-50%);bottom:44px;z-index:3;
+  width:min(600px,calc(100% - 48px));
+  border:1px solid rgba(233,222,198,.13);border-radius:3px;overflow:hidden;
+  background:rgba(14,22,19,.92);backdrop-filter:blur(6px);
 }
 body.walking .ladder{display:flex}
+body.walking #stage{padding-bottom:118px}
 .rung{
   flex:1;padding:11px 8px;text-align:center;
   border-right:1px solid rgba(233,222,198,.09);
@@ -431,8 +434,13 @@ body.walking .ladder{display:flex}
 }
 form{margin:30px auto 0;max-width:560px;text-align:left}
 .q{margin-bottom:22px}
-.q label{display:block;font-size:15px;margin-bottom:8px}
-.q span{display:block;font-size:13.5px;color:var(--lamp-dim);margin-bottom:8px}
+.q label{
+  display:block;margin-bottom:10px;
+  font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:clamp(20px,3.6vw,25px);line-height:1.25;letter-spacing:-0.015em;
+  color:#F1E7D2;
+}
+.q span{display:block;font-size:13.5px;color:var(--lamp-dim);margin:-4px 0 10px}
 input[type=text],input[type=email],textarea{
   width:100%;background:rgba(233,222,198,.05);color:var(--lamp);
   border:1px solid rgba(233,222,198,.22);border-radius:2px;
@@ -441,7 +449,15 @@ input[type=text],input[type=email],textarea{
 textarea{min-height:88px;resize:vertical}
 input:focus,textarea:focus{outline:0;border-color:var(--bronze-lit);background:rgba(233,222,198,.08)}
 .hp{position:absolute;left:-9999px}
-.err{color:var(--bronze-lit);font-size:14px;margin-top:12px;min-height:1px}
+.err{color:var(--bronze-lit);font-size:14.5px;margin-top:14px;min-height:1px;line-height:1.5}
+.err:not(:empty){
+  border:1px solid rgba(199,154,70,.45);background:rgba(199,154,70,.10);
+  border-radius:2px;padding:12px 14px;
+}
+.rescue{
+  display:inline-block;margin-top:10px;color:#F3E2BC;
+  text-decoration:underline;text-underline-offset:3px;font-weight:500;
+}
 
 /* ---------- resolution ---------- */
 .tally{
@@ -657,6 +673,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="quiet">Wager 001</p>
     <p class="line" style="margin-top:14px">Would you put 20 minutes behind a stranger's idea?</p>
+    <p class="sub" style="margin-top:16px;color:var(--lamp)">Stake + Wager is a place where an idea is tested by what people are willing to put behind it — built for anyone whose idea needs more than applause.</p>
     <div class="panel">
       <span class="tag">The proposition</span>
       <p style="margin:0 0 14px">Most people say yes to that in principle and no in practice. This page is the test.</p>
@@ -665,6 +682,28 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         <div><svg class="ic"><use href="#i-hand"/></svg><b>3</b><i>questions to answer</i></div>
         <div><svg class="ic"><use href="#i-check"/></svg><b>18 Sep</b><i>the day it is due</i></div>
       </div>
+      <div class="verdict-strip" style="margin-top:18px"><svg class="ic"><use href="#i-x"/></svg>
+        Nobody wins this. No money changes hands on outcomes.</div>
+      <p style="margin:14px 0 0;font-size:13.5px;color:var(--lamp-dim)">
+        People bring different things to the same problem, and reality answers on the date.
+        <button class="handle" id="why-btn" type="button" aria-expanded="false" aria-controls="why">What that looks like</button>
+      </p>
+    </div>
+
+    <div class="panel" id="why" hidden>
+      <span class="tag">Not a bet</span>
+      <p style="margin:0 0 14px">A business in Somalia is failing. The owner puts the opportunity on the table — that is their stake.</p>
+      <p style="margin:0 0 14px">One person offers 200 hours of turnaround work. Another gives two hours on the numbers. Another finds customers. Another lends equipment.</p>
+      <p style="margin:0 0 16px">Nobody bet against anybody. Four people brought four different things to the same problem. The business recovers or it doesn't, and that is the only thing that settles.</p>
+
+      <dl style="margin:0;display:grid;grid-template-columns:118px 1fr;gap:9px 18px;font-size:13.5px">
+        <dt style="color:var(--lamp-dim);margin:0">Tested here</dt>
+        <dd style="margin:0">Africa first, because the problems are concrete and the resource that is never scarce is people willing to work on them. Capital-first models keep arriving and leaving. This one starts with commitment.</dd>
+        <dt style="color:var(--lamp-dim);margin:0">True anywhere</dt>
+        <dd style="margin:0">Nothing about it is regional. A failing shop, a research question, a piece of software — anywhere someone has to go first before anyone else will follow.</dd>
+        <dt style="color:var(--lamp-dim);margin:0">Still unproven</dt>
+        <dd style="margin:0">All of that is the claim, not the finding. This page is the first test of whether anyone puts anything down at all.</dd>
+      </dl>
     </div>
     <div class="acts"><button class="go" type="button" data-go="decision">Continue</button></div>
   </section>
@@ -692,6 +731,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <p class="sub">It is worth as much to this experiment as sitting down, but only if I know why. One line is plenty.</p>
     <form id="pass-form" name="wager-001-pass" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="wager-001-pass">
+      <input type="hidden" class="src" name="source" value="unknown">
+      <input type="hidden" class="landed" name="landed_at" value="">
       <p class="hp"><label>Leave blank <input name="bot-field"></label></p>
       <div class="q">
         <label for="pass-why">What stopped you?</label>
@@ -701,7 +742,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         <label for="pass-who">Your name or email, if you want the result anyway</label>
         <input type="text" id="pass-who" name="who">
       </div>
-      <button class="go" type="submit">Send it</button>
+      <button class="go" type="button" id="send-pass">Send it</button>
       <p class="err" id="pass-err"></p>
     </form>
     <div class="acts"><button class="away" type="button" data-go="decision">Back to the table</button></div>
@@ -747,7 +788,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       <p class="err" id="seat-err"></p>
     </div>
 
-    <p class="terms">Given voluntarily. I may use what you send in the project however I like. No ownership, payment, or further obligation is implied on either side. Your name appears on the published result only if you say it can.</p>
+    <p class="terms">This is an <b style="color:var(--lamp);font-weight:500">advice wager</b> — the lightest of the three classes, alongside contribution and co-build. Given voluntarily. I may use what you send in the project however I like. No ownership, payment, or further obligation is implied on either side. Your name appears on the published result only if you say it can.</p>
     <div class="acts">
       <button class="go" id="take-seat" type="button">Put 20 minutes down</button>
       <button class="away" type="button" data-go="decision">Not yet</button>
@@ -772,13 +813,14 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
     <form id="wager-form" name="wager-001" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="wager-001">
+      <input type="hidden" class="src" name="source" value="unknown">
+      <input type="hidden" class="landed" name="landed_at" value="">
       <p class="hp"><label>Leave blank <input name="bot-field"></label></p>
 
       <div class="q">
         <label id="q1-label">Would you have said yes?</label>
         <div class="picks" role="group" aria-labelledby="q1-label">
           <button class="pick" type="button" data-pick="Yes">Yes</button>
-          <button class="pick" type="button" data-pick="Almost">Almost</button>
           <button class="pick" type="button" data-pick="No">No</button>
         </div>
         <input type="hidden" id="q1" name="q1_would_you">
@@ -791,14 +833,15 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       </div>
 
       <div class="q">
-        <label for="q3">What was missing?</label>
-        <textarea id="q3" name="q3_what_was_missing" required></textarea>
+        <label for="q3" id="q3-label">What was missing?</label>
+        <span id="q3-hint"></span>
+        <textarea id="q3" name="q3_what_was_missing"></textarea>
       </div>
 
       <input type="hidden" id="carry-name" name="name">
       <input type="hidden" id="carry-mail" name="email">
 
-      <button class="go" type="submit">Put it on the table</button>
+      <button class="go" type="button" id="send-wager">Put it on the table</button>
       <p class="err" id="task-err"></p>
     </form>
   </section>
@@ -892,7 +935,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes.
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.55">build 7</span>
 </footer>
 
 <script>
@@ -1002,31 +1045,73 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     setTimeout(function(){ tbl.classList.add("took"); }, 210);
   }
 
+  /* ---- taking the seat ---- */
+  var seatName = document.getElementById("who");
+  var seatMail = document.getElementById("mail");
+  var seatErr  = document.getElementById("seat-err");
+  var takeSeat = document.getElementById("take-seat");
+
+  function nameThem(n){
+    var first = n.trim().split(/\s+/)[0].replace(/[<>&"']/g,"");
+    var tag   = "@" + first;
+    var s = document.getElementById("seated");
+    if(s) s.innerHTML = '<span class="handle" style="cursor:default;border-bottom-style:solid">' +
+                        tag + '</span> is at the table.';
+    var dw = document.getElementById("done-who");
+    if(dw) dw.textContent = tag;
+    var ll = document.getElementById("loaded-line");
+    if(ll) ll.textContent = "The table is loaded, " + first + ".";
+  }
+
+  if(takeSeat){
+    takeSeat.addEventListener("click", function(){
+      var n = seatName ? seatName.value.trim() : "";
+      var m = seatMail ? seatMail.value.trim() : "";
+      if(!n){
+        seatErr.textContent = "Something to call you, so the commitment has someone behind it.";
+        seatName.focus(); return;
+      }
+      if(!m || m.indexOf("@") < 1 || m.indexOf(".") < 0){
+        seatErr.textContent = "An email, so the result on 23 September can reach you.";
+        seatMail.focus(); return;
+      }
+      seatErr.textContent = "";
+      document.getElementById("carry-name").value = n;
+      document.getElementById("carry-mail").value = m;
+      nameThem(n);
+      try{
+        localStorage.setItem("sw001name", n);
+        localStorage.setItem("sw001mail", m);
+      }catch(e){}
+      go("loaded");
+    });
+  }
+
   /* ---- remember where they were ---- */
   function remember(state){
     try{ localStorage.setItem("sw001", state); }catch(e){}
   }
+
   function resume(){
-    var saved;
-    try{ saved = localStorage.getItem("sw001"); }catch(e){ return; }
+    var saved = null, n = null, m = null;
     try{
-      var n = localStorage.getItem("sw001name"), m = localStorage.getItem("sw001mail");
-      if(n && m){
-        document.getElementById("carry-name").value = n;
-        document.getElementById("carry-mail").value = m;
-        var tag = "@" + n.trim().split(/\s+/)[0];
-    document.getElementById("seated").innerHTML =
-      '<span class="handle" style="cursor:default;border-bottom-style:solid">' + tag.replace(/[<>&]/g,"") + '</span> is at the table.';
-    var dl = document.getElementById("done-who");
-    if(dl) dl.textContent = tag;
-    document.getElementById("loaded-line").textContent =
-      "The table is loaded, " + n.trim().split(/\s+/)[0] + ".";
-        if(seatName) seatName.value = n;
-        if(seatMail) seatMail.value = m;
-      }
-    }catch(e){}
-    if(saved === "done"){ document.body.classList.add("inside"); go("done"); }
-    else if(saved === "task" || saved === "loaded"){
+      saved = localStorage.getItem("sw001");
+      n = localStorage.getItem("sw001name");
+      m = localStorage.getItem("sw001mail");
+    }catch(e){ return; }
+
+    if(n && m){
+      document.getElementById("carry-name").value = n;
+      document.getElementById("carry-mail").value = m;
+      if(seatName) seatName.value = n;
+      if(seatMail) seatMail.value = m;
+      nameThem(n);
+    }
+
+    if(saved === "done"){
+      document.body.classList.add("inside");
+      go("done");
+    }else if(saved === "task" || saved === "loaded"){
       document.body.classList.add("inside");
       loadYourSide(false);
       go("task");
@@ -1095,108 +1180,145 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     return out.join("&");
   }
 
-  function wire(formId, errId, after){
+  function wire(formId, errId, btnId, after, check){
     var form = document.getElementById(formId);
-    if(!form) return;
+    var btn  = document.getElementById(btnId);
     var err  = document.getElementById(errId);
-    form.addEventListener("submit", function(e){
-      e.preventDefault();
-      err.textContent = "";
-      var btn = form.querySelector("button[type=submit]");
-      btn.disabled = true;
+    if(!form || !btn || !err) return;
+
+    btn.addEventListener("click", function(){
+      err.innerHTML = "";
+
+      /* our own validation, so nothing is ever refused silently */
+      var problem = check ? check() : null;
+      if(problem){
+        err.textContent = problem;
+        if(err.scrollIntoView) err.scrollIntoView({block:"center", behavior:"smooth"});
+        return;
+      }
+
       var was = btn.textContent;
+      btn.disabled = true;
       btn.textContent = "Sending";
+
+      function failed(why){
+        btn.disabled = false;
+        btn.textContent = was;
+        err.innerHTML = why + " Nothing you wrote is lost. " +
+          '<a class="rescue" href="' + mailtoFor(form) + '">Send it by email instead</a>' +
+          " \u2014 it counts exactly the same.";
+        if(err.scrollIntoView) err.scrollIntoView({block:"center", behavior:"smooth"});
+      }
+
+      if(location.protocol !== "http:" && location.protocol !== "https:"){
+        failed("This copy is open from your own machine, so there is no server to post to.");
+        return;
+      }
+
       fetch("/", {
         method:"POST",
         headers:{"Content-Type":"application/x-www-form-urlencoded"},
         body: encode(form)
       }).then(function(r){
-        if(!r.ok) throw new Error(r.status);
+        if(!r.ok) throw new Error("the server answered " + r.status);
         after();
-      }).catch(function(){
-        btn.disabled = false;
-        btn.textContent = was;
-        err.textContent = "That did not send. Email it to joo@stakeandwager.com instead and it counts the same.";
+      }).catch(function(ex){
+        failed("That did not send \u2014 " + ((ex && ex.message) || "no connection") + ".");
       });
     });
   }
 
-  /* ---- taking a seat: identity is the first thing put down ---- */
-  var seatName = document.getElementById("who");
-  var seatMail = document.getElementById("mail");
-  var seatErr  = document.getElementById("seat-err");
-  var seatBtn  = document.getElementById("take-seat");
-  var sitter   = {name:"", email:""};
-
-  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-
-  seatBtn.addEventListener("click", function(){
-    var n = seatName.value.trim(), m = seatMail.value.trim();
-    if(!n){ seatErr.textContent = "Something to call you, so the commitment has someone behind it."; seatName.focus(); return; }
-    if(!validEmail(m)){ seatErr.textContent = "An email, so the result can reach you on 23 September."; seatMail.focus(); return; }
-    seatErr.textContent = "";
-    sitter.name = n; sitter.email = m;
-    document.getElementById("carry-name").value = n;
-    document.getElementById("carry-mail").value = m;
-    var tag = "@" + n.trim().split(/\s+/)[0];
-    document.getElementById("seated").innerHTML =
-      '<span class="handle" style="cursor:default;border-bottom-style:solid">' + tag.replace(/[<>&]/g,"") + '</span> is at the table.';
-    var dl = document.getElementById("done-who");
-    if(dl) dl.textContent = tag;
-    document.getElementById("loaded-line").textContent =
-      "The table is loaded, " + n.trim().split(/\s+/)[0] + ".";
-    try{ localStorage.setItem("sw001name", n); localStorage.setItem("sw001mail", m); }catch(e){}
-    go("loaded");
-  });
-
-  /* ---- who is on the other side ---- */
-  var whoBtn = document.getElementById("who-btn");
-  var profile = document.getElementById("profile");
-  if(whoBtn && profile){
-    whoBtn.addEventListener("click", function(){
-      var opening = profile.hasAttribute("hidden");
-      if(opening){ profile.removeAttribute("hidden"); }
-      else{ profile.setAttribute("hidden",""); }
-      whoBtn.setAttribute("aria-expanded", String(opening));
+  /* if the post ever fails, the answers leave by email rather than vanishing */
+  function mailtoFor(form){
+    var d = new FormData(form), lines = [];
+    d.forEach(function(v,k){
+      if(k === "form-name" || k === "bot-field" || !String(v).trim()) return;
+      lines.push(k.replace(/_/g," ") + ":\n" + v + "\n");
     });
+    return "mailto:joo@stakeandwager.com?subject=" +
+      encodeURIComponent("Wager 001 " + (form.id === "pass-form" ? "passing" : "my answers")) +
+      "&body=" + encodeURIComponent(lines.join("\n"));
   }
 
-  /* ---- the verdict: one tap, and question two only if it applies ---- */
-  var verdict = document.getElementById("q1");
-  var q2block = document.getElementById("q2-block");
-  Array.prototype.forEach.call(document.querySelectorAll(".pick"), function(b){
-    b.addEventListener("click", function(){
-      Array.prototype.forEach.call(document.querySelectorAll(".pick"), function(o){
-        o.classList.remove("chosen");
-        o.setAttribute("aria-pressed","false");
-      });
-      b.classList.add("chosen");
-      b.setAttribute("aria-pressed","true");
-      verdict.value = b.getAttribute("data-pick");
-      if(verdict.value === "Yes"){
-        q2block.classList.add("gone");
-        document.getElementById("q2").value = "";
-      }else{
-        q2block.classList.remove("gone");
-      }
-      document.getElementById("task-err").textContent = "";
+  wire("wager-form", "task-err", "send-wager",
+    function(){ go("done"); },
+    function(){
+      if(!document.getElementById("q1").value) return "Yes or no first.";
+      if(document.getElementById("q1").value !== "Yes" &&
+         !document.getElementById("q3").value.trim())
+        return "What was missing is the one that matters. A sentence is enough.";
+      return null;
     });
-  });
 
-  document.getElementById("wager-form").addEventListener("submit", function(e){
-    if(!verdict.value){
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      document.getElementById("task-err").textContent = "Pick one first: yes, almost, or no.";
-      document.querySelector(".pick").focus();
-    }
-  }, true);
+  wire("pass-form", "pass-err", "send-pass",
+    function(){
+      document.getElementById("pass-form").innerHTML =
+        "<p class='sub' style='margin:0'>Recorded. Thank you for saying so.</p>";
+    },
+    function(){
+      if(!document.getElementById("pass-why").value.trim()) return "One line on what stopped you.";
+      return null;
+    });
 
-  wire("wager-form","task-err", function(){ go("done"); });
-  wire("pass-form","pass-err", function(){
-    var f = document.getElementById("pass-form");
-    f.innerHTML = "<p class='sub' style='margin:0'>Recorded. Thank you for saying so.</p>";
-  });
+  /* ---- how they arrived: founder-solicited or organic ---- */
+  (function(){
+    var s = "unknown";
+    try{
+      var q = new URLSearchParams(window.location.search);
+      s = q.get("s") || q.get("ref") || (document.referrer ? "referrer:" + document.referrer : "direct");
+    }catch(e){}
+    var now = new Date().toISOString();
+    Array.prototype.forEach.call(document.querySelectorAll(".src"), function(i){ i.value = String(s).slice(0,180); });
+    Array.prototype.forEach.call(document.querySelectorAll(".landed"), function(i){ i.value = now; });
+  })();
+
+  /* ---- the two panels that open on a tap ---- */
+  function toggler(btnId, panelId){
+    var btn = document.getElementById(btnId), panel = document.getElementById(panelId);
+    if(!btn || !panel) return;
+    btn.addEventListener("click", function(){
+      var opening = panel.hasAttribute("hidden");
+      if(opening){ panel.removeAttribute("hidden"); } else { panel.setAttribute("hidden",""); }
+      btn.setAttribute("aria-expanded", String(opening));
+    });
+  }
+  toggler("who-btn","profile");
+  toggler("why-btn","why");
+
+  /* ---- the verdict: one tap ---- */
+  (function(){
+    var field   = document.getElementById("q1");
+    var q2block = document.getElementById("q2-block");
+    var taskErr = document.getElementById("task-err");
+    var picks   = document.querySelectorAll(".pick");
+    if(!field || !picks.length) return;
+
+    Array.prototype.forEach.call(picks, function(b){
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(picks, function(o){
+          o.classList.remove("chosen");
+          o.setAttribute("aria-pressed","false");
+        });
+        b.classList.add("chosen");
+        b.setAttribute("aria-pressed","true");
+        field.value = b.getAttribute("data-pick");
+        var yes = (field.value === "Yes");
+        if(q2block){
+          if(yes){
+            q2block.classList.add("gone");
+            var q2 = document.getElementById("q2"); if(q2) q2.value = "";
+          }else{
+            q2block.classList.remove("gone");
+          }
+        }
+        var lab = document.getElementById("q3-label");
+        var hint = document.getElementById("q3-hint");
+        if(lab)  lab.textContent  = yes ? "Anything you would change?" : "What was missing?";
+        if(hint) hint.textContent = yes ? "Optional. Leave it empty if nothing comes to mind." : "";
+        if(taskErr) taskErr.innerHTML = "";
+      });
+    });
+  })();
 
   resume();
 })();
