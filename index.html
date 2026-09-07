@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <!--
-  stakeandwager
+  Stakeandwager
   A protocol for measuring whether commitment converts to action.
 
   Copyright (c) 2026 Stakeandwager LLC. All rights reserved.
-  Authored by John Obidinma Okoli. stakeandwager(TM).
+  Authored by John Obidinma Okoli. Stakeandwager(TM).
   stakeandwager.com — domain held since 8 April 2025.
 
   Proprietary. See LICENSE. Reproduction, modification or hosting of this
@@ -18,9 +18,9 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="author" content="John Obidinma Okoli">
 <meta name="copyright" content="© 2026 Stakeandwager LLC. All rights reserved.">
-<title>stakeandwager</title>
+<title>Stakeandwager</title>
 <meta name="description" content="There is a table inside.">
-<meta property="og:title" content="stakeandwager">
+<meta property="og:title" content="Stakeandwager">
 <meta property="og:description" content="There is a table inside.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,11 +59,20 @@ body{
 /* the room: a pool of light that grows once the door opens */
 #glow{
   position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(120% 80% at 50% 42%, rgba(233,222,198,.10), rgba(233,222,198,0) 62%);
-  opacity:0;transition:opacity 1.4s ease;
+  background:radial-gradient(120% 80% at 50% 42%, rgba(233,222,198,.14), rgba(233,222,198,0) 62%);
+  opacity:0;transition:opacity 1.6s ease;
 }
-body.inside{background:var(--room)}
+body{transition:background-color 1.6s ease}
 body.inside #glow{opacity:1}
+
+/* the light climbs the further in you go */
+body.lit-1{background:#101815}  body.lit-1 #glow{opacity:.45}
+body.lit-2{background:#131B18}  body.lit-2 #glow{opacity:.65}
+body.lit-3{background:#161F1B}  body.lit-3 #glow{opacity:.85}
+body.lit-4{background:#1A241F}  body.lit-4 #glow{opacity:1}
+body.lit-5{background:#1E2A24}  body.lit-5 #glow{opacity:1.15}
+body.lit-1 #lamp{opacity:.55} body.lit-2 #lamp{opacity:.72}
+body.lit-3 #lamp{opacity:.86} body.lit-4 #lamp{opacity:1} body.lit-5 #lamp{opacity:1}
 
 #stage{position:relative;z-index:1;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 24px}
 
@@ -218,8 +227,15 @@ body.inside #lamp{opacity:1}
 .backbar{display:flex;justify-content:flex-start}
 
 /* ---------- the drawn table ---------- */
-.room{margin:6px auto 0;max-width:560px}
-.room svg{display:block;width:100%;height:auto}
+.room{margin:6px auto 0;max-width:560px;perspective:1100px}
+.room svg{
+  display:block;width:100%;height:auto;
+  transform:rotateX(9deg) scale(1.02);
+  transform-origin:50% 62%;
+  transition:transform .5s cubic-bezier(.2,.7,.3,1);
+  will-change:transform;
+}
+@media (prefers-reduced-motion:reduce){.room svg{transform:none;transition:none}}
 #seat-glow{opacity:0;transition:opacity .7s ease}
 .seated-now #seat-glow{opacity:1}
 #seat-stack{opacity:0;transform-origin:center}
@@ -532,15 +548,11 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   </section>
 
   <!-- 1 ................................................. the door opens -->
-  <section class="scene" data-scene="enter">
-    <p class="line">A table cannot be opened empty.</p>
-    <div class="acts"><button class="go" type="button" data-go="rule">Go on</button></div>
-  </section>
-
   <!-- 1b ................................................ the rule, shown -->
   <section class="scene" data-scene="rule">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
-    <p class="line" style="font-size:clamp(22px,4.4vw,30px);max-width:26ch">Before you ask anyone to commit, you commit first.</p>
+    <p class="line">A table cannot be opened empty.</p>
+    <p class="sub" style="margin-top:14px">Before you ask anyone to commit, you commit first.</p>
 
     <div class="compare">
       <div class="plate">
@@ -687,7 +699,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="quiet">Wager 001</p>
     <p class="line" style="margin-top:14px">Would you put 20 minutes behind a stranger's idea?</p>
-    <p class="sub" style="margin-top:16px;color:var(--lamp)">stakeandwager is a place where an idea is tested by what people are willing to put behind it — built for anyone whose idea needs more than applause.</p>
+    <p class="sub" style="margin-top:16px;color:var(--lamp)">Stakeandwager is a place where an idea is tested by what people are willing to put behind it — built for anyone whose idea needs more than applause.</p>
     <div class="panel">
       <span class="tag">The proposition</span>
       <p style="margin:0 0 14px">Most people say yes to that in principle and no in practice. This page is the test.</p>
@@ -923,6 +935,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
     <p class="sub">One email on <time datetime="2026-09-23">23 September</time>: whether six people came through, what the answers had in common, and what changed because of yours. If it resolves no, the same email says so.</p>
     <p class="terms">Anything you want to add later goes to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>. If it is something you will actually do rather than something you might, say so plainly — that is the part being measured.</p>
+    <div class="acts"><button class="away" type="button" id="leave">Leave the table</button></div>
   </section>
 
   <!-- 8 ................................................. resolution -->
@@ -949,7 +962,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 8</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 10</span>
 </footer>
 
 <script>
@@ -962,8 +975,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   var MACHINE = {
     outside:     { event:"scene_outside" },
-    enter:       { event:"scene_enter",       onEnter:function(){ document.body.classList.add("inside"); } },
-    rule:        { event:"scene_rule" },
+    rule:        { event:"scene_rule",        onEnter:function(){ document.body.classList.add("inside"); } },
     table:       { event:"scene_table" },
     proposition: { event:"scene_proposition" },
     decision:    { event:"scene_decision" },
@@ -1000,15 +1012,27 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     current = next;
     if(MACHINE[next].onEnter) MACHINE[next].onEnter();
     ladderTo(next);
+    lightTo(next);
     remember(next);
     window.scrollTo(0,0);
     var h = scenes[next].querySelector(".line");
     if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); }
   }
 
+  /* ---- the light: it climbs as they go in ---- */
+  var LIGHT = {
+    outside:0, rule:1, table:2, proposition:2, decision:3, walkaway:3,
+    sit:3, loaded:4, task:4, done:5, closed:5
+  };
+  function lightTo(state){
+    var n = LIGHT[state] || 0, b = document.body;
+    for(var i=1;i<=5;i++) b.classList.remove("lit-"+i);
+    if(n) b.classList.add("lit-"+n);
+  }
+
   /* ---- the ladder: where they are ---- */
   var RUNG = {
-    outside:null, enter:null,
+    outside:null,
     rule:"interest", table:"interest", proposition:"interest",
     decision:"interest", walkaway:"interest",
     sit:"wager", loaded:"wager",
@@ -1175,7 +1199,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     clearTimeout(idle);
     knock.disabled = true;
     knock.classList.add("rapping");
-    setTimeout(function(){ go("enter"); }, 950);
+    setTimeout(function(){ go("rule"); }, 950);
   });
 
   /* ---- every other transition ---- */
@@ -1331,6 +1355,34 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         if(hint) hint.textContent = yes ? "Optional. Leave it empty if nothing comes to mind." : "";
         if(taskErr) taskErr.innerHTML = "";
       });
+    });
+  })();
+
+  /* ---- the table shifts a little as you look at it ---- */
+  (function(){
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if(!window.matchMedia("(hover: hover)").matches) return;
+    document.addEventListener("mousemove", function(e){
+      var svgs = document.querySelectorAll(".room svg");
+      if(!svgs.length) return;
+      var dx = (e.clientX / window.innerWidth  - .5);
+      var dy = (e.clientY / window.innerHeight - .5);
+      var t = "rotateX(" + (9 - dy*4).toFixed(2) + "deg) rotateY(" + (dx*5).toFixed(2) + "deg) scale(1.02)";
+      Array.prototype.forEach.call(svgs, function(s){ s.style.transform = t; });
+    }, {passive:true});
+  })();
+
+  /* ---- leaving: the room lets you out, and forgets you ---- */
+  (function(){
+    var out = document.getElementById("leave");
+    if(!out) return;
+    out.addEventListener("click", function(){
+      try{
+        localStorage.removeItem("sw001");
+        localStorage.removeItem("sw001name");
+        localStorage.removeItem("sw001mail");
+      }catch(e){}
+      location.href = location.pathname;
     });
   })();
 
