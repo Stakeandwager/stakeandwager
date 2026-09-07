@@ -76,7 +76,9 @@ body.lit-3 #lamp{opacity:.86} body.lit-4 #lamp{opacity:1} body.lit-5 #lamp{opaci
 
 #stage{position:relative;z-index:1;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 24px}
 
-.scene{display:none;width:100%;max-width:640px;text-align:center}
+.scene{display:none;width:100%;max-width:660px;text-align:left}
+.scene[data-scene="outside"]{text-align:center}
+.scene[data-scene="done"] .room{margin-left:0}
 .scene.on{display:block}
 
 @media (prefers-reduced-motion:no-preference){
@@ -86,20 +88,21 @@ body.lit-3 #lamp{opacity:.86} body.lit-4 #lamp{opacity:1} body.lit-5 #lamp{opaci
 
 /* ---------- typography ---------- */
 .line{
-  font-family:"Spectral",Georgia,serif;font-weight:300;
-  font-size:clamp(27px,5.6vw,40px);line-height:1.2;
-  letter-spacing:-0.02em;margin:0 auto;max-width:20ch;
+  font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:clamp(25px,4.6vw,33px);line-height:1.25;
+  letter-spacing:-0.018em;margin:0;max-width:26ch;
 }
-.sub{color:var(--lamp-dim);max-width:52ch;margin:18px auto 0;font-size:15.5px}
+.sub{color:var(--lamp-dim);max-width:58ch;margin:14px 0 0;font-size:15.5px}
 .quiet{color:var(--lamp-dim);font-size:14px}
 
 .known{
-  font-size:14.5px;color:var(--lamp-dim);margin:0 auto 14px;
+  font-size:14.5px;color:var(--lamp-dim);margin:0 auto 14px;text-align:center;
 }
 .known[hidden]{display:none}
 
 /* ---------- scene 0: outside, the door ---------- */
 .bell{
+  text-align:center;
   font-family:"Spectral",Georgia,serif;font-weight:300;
   font-size:clamp(21px,4.4vw,29px);line-height:1.25;letter-spacing:-0.015em;
   color:var(--lamp);margin:0 auto;max-width:18ch;min-height:2.5em;
@@ -257,7 +260,7 @@ body.inside #lamp{opacity:1}
 /* ---------- panels, stats, ladder ---------- */
 .panel{
   border:1px solid rgba(233,222,198,.13);border-radius:3px;
-  padding:24px 22px 26px;margin:26px auto 0;max-width:600px;text-align:left;
+  padding:22px 20px 24px;margin:22px 0 0;max-width:100%;text-align:left;
   background:radial-gradient(130% 100% at 50% 0%, rgba(233,222,198,.045), rgba(233,222,198,0) 72%);
 }
 .panel.lit{
@@ -275,8 +278,8 @@ body.inside #lamp{opacity:1}
 .tag.lit{color:#E4C88A;border-color:rgba(199,154,70,.45);background:rgba(199,154,70,.10)}
 
 .stats{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
-  margin:18px 0 0;text-align:center;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  margin:18px 0 0;text-align:left;
 }
 .stats > div{padding:2px 0}
 .stats svg.ic{width:19px;height:19px;opacity:.75;margin-bottom:7px}
@@ -329,8 +332,8 @@ body.walking #stage{padding-bottom:118px}
 
 /* ---------- the rule: two tables ---------- */
 .compare{
-  display:grid;grid-template-columns:1fr 1fr;gap:18px;
-  margin:30px auto 0;max-width:660px;
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  margin:26px 0 0;max-width:100%;
 }
 .plate{
   border:1px solid rgba(233,222,198,.12);border-radius:3px;
@@ -388,15 +391,15 @@ body.walking #stage{padding-bottom:118px}
   color:var(--ink-soft);opacity:.85;
 }
 .whose{
-  margin:22px auto 0;max-width:54ch;font-size:14.5px;line-height:1.6;
+  margin:20px 0 0;max-width:58ch;font-size:14.5px;line-height:1.6;
   color:var(--lamp-dim);text-align:left;
   border-left:2px solid var(--bronze);padding-left:14px;
 }
 .seat{
-  margin:26px auto 0;max-width:420px;text-align:left;
+  margin:24px 0 0;max-width:440px;text-align:left;
 }
 .seated{
-  margin:14px auto 0;font-size:13.5px;color:var(--lamp-dim);
+  margin:12px 0 0;font-size:13.5px;color:var(--lamp-dim);
 }
 
 /* ---------- the verdict ---------- */
@@ -443,7 +446,7 @@ body.walking #stage{padding-bottom:118px}
 }
 
 /* ---------- actions ---------- */
-.acts{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.acts{margin-top:30px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
 .go{
   border:0;border-radius:2px;background:var(--lamp);color:var(--ink);
   font-family:inherit;font-size:16.5px;font-weight:500;padding:16px 30px;cursor:pointer;
@@ -463,11 +466,11 @@ body.walking #stage{padding-bottom:118px}
 
 /* ---------- the work ---------- */
 .terms{
-  margin:26px auto 0;max-width:56ch;text-align:left;
+  margin:24px 0 0;max-width:60ch;text-align:left;
   font-size:13.5px;color:var(--lamp-dim);line-height:1.6;
   border-top:1px solid rgba(233,222,198,.14);padding-top:16px;
 }
-form{margin:30px auto 0;max-width:560px;text-align:left}
+form{margin:26px 0 0;max-width:580px;text-align:left}
 .q{margin-bottom:22px}
 .q label{
   display:block;margin-bottom:10px;
@@ -497,7 +500,7 @@ input:focus,textarea:focus{outline:0;border-color:var(--bronze-lit);background:r
 /* ---------- resolution ---------- */
 .tally{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
-  gap:18px;margin:28px auto 0;max-width:520px;text-align:left;
+  gap:18px;margin:26px 0 0;max-width:520px;text-align:left;
 }
 .tally div b{display:block;font-family:"Spectral",Georgia,serif;font-weight:400;font-size:27px;line-height:1.1}
 .tally div span{font-size:13.5px;color:var(--lamp-dim)}
@@ -557,8 +560,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <!-- 1b ................................................ the rule, shown -->
   <section class="scene" data-scene="rule">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
-    <p class="line">A table cannot be opened empty.</p>
-    <p class="sub" style="margin-top:14px">Before you ask anyone to commit, you commit first.</p>
+    <p class="line">You can't open a table with nothing on it.</p>
+    <p class="sub" style="margin-top:14px">Whoever asks goes first. That's the only rule here.</p>
 
     <div class="compare">
       <div class="plate">
@@ -572,8 +575,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         <div class="said-row"><svg class="ic"><use href="#i-person"/></svg>
           <p class="said">&ldquo;I have an idea. What do you think?&rdquo;</p></div>
         <h3 style="margin-top:14px">Nothing on it</h3>
-        <p>Easy to ask. Easy to ignore. No way to tell whether anyone means it.</p>
-        <div class="verdict-strip"><svg class="ic"><use href="#i-x"/></svg>No commitment, so no signal.</div>
+        <p>Costs nothing to ask, so it tells you nothing. Anyone can say they have an idea.</p>
+        <div class="verdict-strip"><svg class="ic"><use href="#i-x"/></svg>Nothing down, nothing to read.</div>
       </div>
 
       <div class="plate lit">
@@ -613,8 +616,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         <div class="said-row"><svg class="ic"><use href="#i-person"/></svg>
           <p class="said">&ldquo;I have put 17 months into this. Will you put 20 minutes behind it?&rdquo;</p></div>
         <h3 style="margin-top:14px">Something on it</h3>
-        <p>Now there is a cost on one side. That is what makes the question worth answering.</p>
-        <div class="verdict-strip lit"><svg class="ic"><use href="#i-check"/></svg>Commitment is the signal. It is what invites an answer.</div>
+        <p>Someone paid something before asking. That's what makes it worth answering.</p>
+        <div class="verdict-strip lit"><svg class="ic"><use href="#i-check"/></svg>The cost is the signal.</div>
       </div>
     </div>
 
@@ -686,7 +689,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
             <li>Fifteen approaches made by hand</li>
             <li>The result published either way</li>
           </ul>
-          <p class="check">The registration date is public. You can check it yourself.</p>
+          <p class="check">That date is public. Go and check it.</p>
         </div>
         <div class="pan waiting" id="pan-you">
           <h2>Your side</h2>
@@ -704,20 +707,20 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <section class="scene" data-scene="proposition">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="quiet">Wager 001</p>
-    <p class="line" style="margin-top:14px">Would you put 20 minutes behind a stranger's idea?</p>
-    <p class="sub" style="margin-top:16px;color:var(--lamp)">Stakeandwager is a place where an idea is tested by what people are willing to put behind it — built for anyone whose idea needs more than applause.</p>
+    <p class="line" style="margin-top:14px">Would you give 20 minutes to a stranger's idea?</p>
+    <p class="sub" style="margin-top:16px;color:var(--lamp)">Stakeandwager tests an idea by what people will actually put behind it. It's for anyone whose idea needs more than a thumbs up.</p>
     <div class="panel">
       <span class="tag">The proposition</span>
-      <p style="margin:0 0 14px">Most people say yes to that in principle and no in practice. This page is the test.</p>
+      <p style="margin:0 0 14px">Most people say yes to that in theory and no in practice. This page is where we find out.</p>
       <div class="stats">
         <div><svg class="ic"><use href="#i-clock"/></svg><b>20</b><i>minutes asked of you</i></div>
         <div><svg class="ic"><use href="#i-hand"/></svg><b>3</b><i>questions to answer</i></div>
         <div><svg class="ic"><use href="#i-check"/></svg><b>18 Sep</b><i>the day it is due</i></div>
       </div>
       <div class="verdict-strip" style="margin-top:18px"><svg class="ic"><use href="#i-x"/></svg>
-        Nobody wins this. No money changes hands on outcomes.</div>
+        Nobody wins this. No money changes hands, ever.</div>
       <p style="margin:14px 0 0;font-size:13.5px;color:var(--lamp-dim)">
-        People bring different things to the same problem, and reality answers on the date.
+        Different people bring different things to the same problem. Then we find out if it worked.
         <button class="handle" id="why-btn" type="button" aria-expanded="false" aria-controls="why">What that looks like</button>
       </p>
     </div>
@@ -726,7 +729,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       <span class="tag">Not a bet</span>
       <p style="margin:0 0 14px">A business in Somalia is failing. The owner puts the opportunity on the table — that is their stake.</p>
       <p style="margin:0 0 14px">One person offers 200 hours of turnaround work. Another gives two hours on the numbers. Another finds customers. Another lends equipment.</p>
-      <p style="margin:0 0 16px">Nobody bet against anybody. Four people brought four different things to the same problem. The business recovers or it doesn't, and that is the only thing that settles.</p>
+      <p style="margin:0 0 16px">Nobody bet against anybody. Four people, four different things, one problem. The business recovers or it doesn't, and that's the only thing that settles it.</p>
 
       <dl style="margin:0;display:grid;grid-template-columns:118px 1fr;gap:9px 18px;font-size:13.5px">
         <dt style="color:var(--lamp-dim);margin:0">Tested here</dt>
@@ -734,7 +737,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         <dt style="color:var(--lamp-dim);margin:0">True anywhere</dt>
         <dd style="margin:0">Nothing about it is regional. A failing shop, a research question, a piece of software — anywhere someone has to go first before anyone else will follow.</dd>
         <dt style="color:var(--lamp-dim);margin:0">Still unproven</dt>
-        <dd style="margin:0">All of that is the claim, not the finding. This page is the first test of whether anyone puts anything down at all.</dd>
+        <dd style="margin:0">That's the claim, not the finding. This page is the first test of whether anyone puts anything down at all.</dd>
       </dl>
     </div>
     <div class="acts"><button class="go" type="button" data-go="decision">Continue</button></div>
@@ -743,12 +746,12 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <!-- 4 ................................................. the decision -->
   <section class="scene" data-scene="decision">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
-    <p class="line">Someone has put something down. Now it is your turn to decide.</p>
+    <p class="line">Someone's gone first. Your turn to decide.</p>
     <div class="panel">
       <div class="said-row"><svg class="ic"><use href="#i-chair"/></svg>
-        <p><b style="color:var(--lamp);font-weight:500">Sit at the table.</b> Twenty minutes, once. You answer three questions and get the result on 23 September.</p></div>
+        <p><b style="color:var(--lamp);font-weight:500">Sit at the table.</b> Twenty minutes, once. Three questions, and you hear how it went on 23 September.</p></div>
       <div class="said-row" style="margin-top:14px"><svg class="ic"><use href="#i-x"/></svg>
-        <p><b style="color:var(--lamp);font-weight:500">Walk away.</b> Also a real answer. One line on why is worth as much to this as a yes.</p></div>
+        <p><b style="color:var(--lamp);font-weight:500">Walk away.</b> Also a real answer. One line on why helps me as much as a yes would.</p></div>
     </div>
     <div class="acts">
       <button class="go" type="button" data-go="sit">Sit at the table</button>
@@ -760,7 +763,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <section class="scene" data-scene="walkaway">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">Walking away is a real answer.</p>
-    <p class="sub">It is worth as much to this experiment as sitting down, but only if I know why. One line is plenty.</p>
+    <p class="sub">It helps as much as sitting down does, but only if I know why. One line is plenty.</p>
     <form id="pass-form" name="wager-001-pass" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="wager-001-pass">
       <input type="hidden" class="src" name="source" value="unknown">
@@ -783,8 +786,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <!-- 5 ................................................. sit down -->
   <section class="scene" data-scene="sit">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
-    <p class="line">You are at the table.</p>
-    <p class="sub">You haven't put anything down yet. What is being asked is 20 minutes: read the wager, answer three questions, send it back by <time datetime="2026-09-18">18 September</time>.</p>
+    <p class="line">You're at the table.</p>
+    <p class="sub">Nothing down on your side yet. What I'm asking is 20 minutes: read it, answer three questions, send it back by <time datetime="2026-09-18">18 September</time>.</p>
 
     <div class="panel lit" style="text-align:center;padding:18px 22px 20px">
       <div class="stats" style="margin:0">
@@ -794,15 +797,15 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       </div>
     </div>
 
-    <p class="whose">The 17 months belong to <button class="handle" id="who-btn" type="button" aria-expanded="false" aria-controls="profile">@joo</button>. Still a stranger, unless you want to know who is on the other side of the table.</p>
+    <p class="whose">The 17 months belong to <button class="handle" id="who-btn" type="button" aria-expanded="false" aria-controls="profile">@joo</button>. Still a stranger to you, unless you want to see who's sitting opposite.</p>
 
     <div class="panel" id="profile" hidden>
       <p class="who-name">John Obidinma Okoli</p>
       <dl>
-        <dt>What he does</dt><dd>A developer.</dd>
-        <dt>On the table</dt><dd>17 months carried, 28 hours over the next fourteen days, and this page.</dd>
-        <dt>Since</dt><dd>The domain was registered 8 April 2025. The idea is older. The date is public, so you can check it rather than take his word.</dd>
-        <dt>If it fails</dt><dd>If nobody comes back without being asked, he runs one more cohort with a different framing, then stops. That was written down before any of this was sent.</dd>
+        <dt>Who I am</dt><dd>A developer, in Lagos.</dd>
+        <dt>On the table</dt><dd>17 months on it, 28 hours over the next fortnight, and this page.</dd>
+        <dt>Since</dt><dd>Domain registered 8 April 2025. The idea's older than that. That date is public, so you can check it instead of taking my word.</dd>
+        <dt>If it fails</dt><dd>If nobody comes back on their own, I run this once more differently, then stop. I wrote that down before sending any of this.</dd>
       </dl>
     </div>
 
@@ -832,7 +835,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line" id="loaded-line">The table is loaded.</p>
     <div class="table-slot" id="table-slot"></div>
-    <p class="sub">17 months on one side, 20 minutes on the other. Nothing is settled until the work is done.</p>
+    <p class="sub">17 months one side, 20 minutes the other. Nothing's settled until the work's done.</p>
     <div class="acts"><button class="go" type="button" data-go="task">Begin the 20 minutes</button></div>
   </section>
 
@@ -840,7 +843,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <section class="scene" data-scene="task">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">Three questions.</p>
-    <p class="sub">The first is one tap. The other two are the actual twenty minutes — a blunt paragraph is worth more than a considered page.</p>
+    <p class="sub">First one's a tap. The other two are the actual twenty minutes. Blunt is better than polished.</p>
     <p class="seated" id="seated"></p>
 
     <form id="wager-form" name="wager-001" method="POST" data-netlify="true" netlify-honeypot="bot-field">
@@ -936,7 +939,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         <div><svg class="ic"><use href="#i-clock"/></svg><b>23 Sep</b><i>the result reaches you</i></div>
         <div><svg class="ic"><use href="#i-hand"/></svg><b>1 of 15</b><i>approaches answered</i></div>
       </div>
-      <div class="verdict-strip lit" style="margin-top:18px"><svg class="ic"><use href="#i-check"/></svg>Now the table waits. Reality answers on the date, not before.</div>
+      <div class="verdict-strip lit" style="margin-top:18px"><svg class="ic"><use href="#i-check"/></svg>Now it waits. We find out on the date, not before.</div>
     </div>
 
     <p class="sub">One email on <time datetime="2026-09-23">23 September</time>: whether six people came through, what the answers had in common, and what changed because of yours. If it resolves no, the same email says so.</p>
@@ -953,8 +956,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       <div><b>—</b><span>completed</span></div>
       <div><b>—</b><span>escalated</span></div>
     </div>
-    <p class="sub">Six or more completed resolves this yes. Five or fewer resolves no, and it is published as no.</p>
-    <p class="terms">In this first experiment the creator is also the person resolving and reporting the result. That is not independent verification and is not presented as such.</p>
+    <p class="sub">Six or more and it's a yes. Five or fewer and it's a no, published as a no.</p>
+    <p class="terms">For this first one I'm the person reporting the result on my own wager. That isn't independent, and I'm not pretending it is.</p>
   </section>
 
 
@@ -968,7 +971,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 11</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 12</span>
 </footer>
 
 <script>
