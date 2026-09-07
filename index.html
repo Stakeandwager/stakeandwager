@@ -93,6 +93,11 @@ body.lit-3 #lamp{opacity:.86} body.lit-4 #lamp{opacity:1} body.lit-5 #lamp{opaci
 .sub{color:var(--lamp-dim);max-width:52ch;margin:18px auto 0;font-size:15.5px}
 .quiet{color:var(--lamp-dim);font-size:14px}
 
+.known{
+  font-size:14.5px;color:var(--lamp-dim);margin:0 auto 14px;
+}
+.known[hidden]{display:none}
+
 /* ---------- scene 0: outside, the door ---------- */
 .bell{
   font-family:"Spectral",Georgia,serif;font-weight:300;
@@ -540,6 +545,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   <!-- 0 ................................................. outside -->
   <section class="scene on" data-scene="outside">
+    <p class="known" id="known" hidden>Welcome back, <span class="handle" id="known-handle" style="cursor:default;border-bottom-style:solid"></span>. <button class="handle" id="forget-me" type="button" style="font-size:.82em">not you?</button></p>
     <p class="bell" id="bell">You got 20 minutes?</p>
     <button class="door" id="knock" type="button" aria-label="Knock on the door">
       <span class="knocker"></span>
@@ -935,7 +941,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
     <p class="sub">One email on <time datetime="2026-09-23">23 September</time>: whether six people came through, what the answers had in common, and what changed because of yours. If it resolves no, the same email says so.</p>
     <p class="terms">Anything you want to add later goes to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>. If it is something you will actually do rather than something you might, say so plainly — that is the part being measured.</p>
-    <div class="acts"><button class="away" type="button" id="leave">Leave the table</button></div>
+    <div class="acts"><button class="go" type="button" id="leave">Return to the doorway</button></div>
   </section>
 
   <!-- 8 ................................................. resolution -->
@@ -962,7 +968,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 10</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 11</span>
 </footer>
 
 <script>
@@ -1176,6 +1182,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   function say(){
     if(swapping || current !== "outside") return;
+    var k = document.getElementById("known");
+    if(k && !k.hasAttribute("hidden")) return;
     swapping = true;
     bell.classList.add("fading");
     setTimeout(function(){
@@ -1372,11 +1380,44 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     }, {passive:true});
   })();
 
-  /* ---- leaving: the room lets you out, and forgets you ---- */
+  /* ---- the doorway: it remembers you, without asking you to enrol ---- */
+  function whoIsBack(){
+    try{ return localStorage.getItem("sw001name"); }catch(e){ return null; }
+  }
+
+  function greetAtDoor(){
+    var box = document.getElementById("known");
+    var tag = document.getElementById("known-handle");
+    var n = whoIsBack();
+    if(!box || !tag) return;
+    if(n && trail.length === 0){
+      tag.textContent = "@" + n.trim().split(/\s+/)[0].replace(/[<>&"']/g,"");
+      box.removeAttribute("hidden");
+    }else{
+      box.setAttribute("hidden","");
+    }
+  }
+
+  /* leaving the table returns you to the doorway, still recognised */
   (function(){
     var out = document.getElementById("leave");
     if(!out) return;
     out.addEventListener("click", function(){
+      try{ localStorage.removeItem("sw001"); }catch(e){}
+      trail = [];
+      var k = document.getElementById("knock");
+      if(k){ k.disabled = false; k.classList.remove("rapping"); }
+      document.body.classList.remove("inside");
+      step("outside");
+      greetAtDoor();
+    });
+  })();
+
+  /* not you? then the room forgets */
+  (function(){
+    var f = document.getElementById("forget-me");
+    if(!f) return;
+    f.addEventListener("click", function(){
       try{
         localStorage.removeItem("sw001");
         localStorage.removeItem("sw001name");
@@ -1387,6 +1428,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   })();
 
   resume();
+  greetAtDoor();
 })();
 </script>
 </body>
