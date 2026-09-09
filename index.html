@@ -74,9 +74,9 @@ body.lit-5{background:#1E2A24}  body.lit-5 #glow{opacity:1.15}
 body.lit-1 #lamp{opacity:.55} body.lit-2 #lamp{opacity:.72}
 body.lit-3 #lamp{opacity:.86} body.lit-4 #lamp{opacity:1} body.lit-5 #lamp{opacity:1}
 
-#stage{position:relative;z-index:1;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 24px}
+#stage{position:relative;z-index:2;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 24px}
 
-.scene{display:none;width:100%;max-width:660px;text-align:left}
+.scene{display:none;width:100%;max-width:660px;text-align:left;position:relative;z-index:3}
 .scene[data-scene="outside"]{text-align:center}
 .scene[data-scene="done"] .room{margin-left:0}
 .scene.on{display:block}
@@ -220,10 +220,11 @@ body.lit-3 #lamp{opacity:.86} body.lit-4 #lamp{opacity:1} body.lit-5 #lamp{opaci
   width:min(560px,96vw);height:300px;z-index:0;pointer-events:none;
   opacity:0;transition:opacity 1.6s ease;
 }
+#lamp *{pointer-events:none}
 body.inside #lamp{opacity:1}
 
 .back{
-  position:relative;display:inline-flex;align-items:center;gap:7px;
+  position:relative;z-index:4;display:inline-flex;align-items:center;gap:7px;
   border:0;background:transparent;color:var(--lamp-dim);
   font-family:inherit;font-size:14px;padding:6px 4px;margin:0 auto 18px;
   cursor:pointer;
@@ -232,7 +233,7 @@ body.inside #lamp{opacity:1}
 .back:active{transform:translateY(1px)}
 .back:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
 .back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.backbar{display:flex;justify-content:flex-start}
+.backbar{display:flex;justify-content:flex-start;position:relative;z-index:4}
 
 /* ---------- the drawn table ---------- */
 .room{margin:6px auto 0;max-width:560px;perspective:1100px}
@@ -354,6 +355,108 @@ body.walking .ladder{display:flex}
     clip:rect(0 0 0 0);white-space:nowrap;
   }
   .rung::before{width:8px;height:8px}
+}
+
+/* ---------- the room, photographed ---------- */
+.plate-photo{
+  position:relative;margin:24px 0 0;border-radius:3px;overflow:hidden;
+  background:#0E1613;
+  box-shadow:0 30px 70px -34px rgba(0,0,0,.85), inset 0 0 0 1px rgba(233,222,198,.10);
+}
+.plate-photo img{display:block;width:100%;height:auto}
+.plate-photo figcaption{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:26px 18px 14px;font-size:12.5px;color:rgba(233,222,198,.72);
+  background:linear-gradient(to top, rgba(14,22,19,.9), rgba(14,22,19,0));
+}
+
+/* a thing someone put down, waiting to be asked about */
+.spot{
+  position:absolute;width:34px;height:34px;padding:0;margin:0;
+  transform:translate(-50%,-50%);cursor:pointer;
+  border:0;background:transparent;
+}
+.spot::before{
+  content:"";position:absolute;inset:11px;border-radius:50%;
+  background:rgba(233,222,198,.9);
+  box-shadow:0 0 0 1px rgba(199,154,70,.9), 0 0 16px 2px rgba(199,154,70,.55);
+}
+.spot::after{
+  content:"";position:absolute;inset:4px;border-radius:50%;
+  border:1px solid rgba(199,154,70,.55);
+}
+.spot:hover::after{border-color:rgba(233,222,198,.9)}
+.spot:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:2px}
+.spot.open::before{background:var(--bronze-lit)}
+@media (prefers-reduced-motion:no-preference){
+  .spot::after{animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{
+    0%,100%{transform:scale(1);opacity:.75}
+    50%{transform:scale(1.35);opacity:.25}
+  }
+  .spot.open::after{animation:none;transform:scale(1.2);opacity:.9}
+}
+
+.relic{
+  position:relative;z-index:3;margin:16px 0 0;border:1px solid rgba(199,154,70,.3);border-radius:3px;
+  background:rgba(199,154,70,.07);padding:20px 20px 22px;
+}
+.relic[hidden]{display:none}
+.relic h4{
+  margin:0;font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:clamp(20px,3.6vw,25px);letter-spacing:-0.015em;color:#F1E7D2;
+}
+.relic dl{margin:14px 0 0;display:grid;grid-template-columns:126px 1fr;gap:9px 18px;font-size:13.5px}
+.relic dt{color:var(--lamp-dim);margin:0}
+.relic dd{margin:0;color:var(--lamp)}
+@media (prefers-reduced-motion:no-preference){
+  .relic{animation:arrive .3s cubic-bezier(.2,.7,.3,1) both}
+}
+@media (max-width:560px){
+  .relic dl{grid-template-columns:1fr;gap:2px 0}
+  .relic dd{margin-bottom:9px}
+  .spot{width:40px;height:40px}
+}
+
+.counted{
+  margin:16px 0 0;font-size:13px;color:var(--lamp-dim);
+  border-top:1px solid rgba(233,222,198,.11);padding-top:13px;
+}
+.counted b{color:#E4C88A;font-weight:500}
+
+/* ---------- the room: tables that are open ---------- */
+.tables{display:grid;gap:12px;margin:24px 0 0}
+.tbl{
+  display:block;width:100%;text-align:left;cursor:pointer;
+  border:1px solid rgba(233,222,198,.13);border-radius:3px;
+  background:rgba(233,222,198,.022);color:inherit;
+  font-family:inherit;padding:18px 20px 19px;
+  transition:border-color .25s ease,background .25s ease;
+}
+.tbl:hover{border-color:rgba(199,154,70,.4);background:rgba(199,154,70,.05)}
+.tbl:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
+.tbl.mine{border-color:rgba(199,154,70,.34);background:rgba(199,154,70,.06)}
+
+.tbl-top{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.tbl-where{font-size:12.5px;color:var(--lamp-dim);letter-spacing:.01em}
+.tbl-when{font-size:12.5px;color:var(--lamp-dim);font-variant-numeric:tabular-nums}
+.tbl h3{
+  margin:7px 0 0;font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:clamp(18px,3.2vw,22px);line-height:1.25;letter-spacing:-0.015em;color:#F1E7D2;
+}
+.tbl .mile{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--lamp-dim)}
+
+.tbl-load{display:flex;gap:22px;flex-wrap:wrap;margin:14px 0 0}
+.tbl-load div{font-size:12.5px;color:var(--lamp-dim);line-height:1.35}
+.tbl-load b{
+  display:block;font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:17px;color:#E4C88A;letter-spacing:-0.01em;
+}
+.tbl-load b.dim{color:var(--lamp-dim)}
+
+.roomnote{
+  margin:20px 0 0;font-size:13px;color:var(--lamp-dim);line-height:1.6;
+  border-top:1px solid rgba(233,222,198,.11);padding-top:14px;
 }
 
 /* ---------- the rule: two tables ---------- */
@@ -591,7 +694,7 @@ input:focus,textarea:focus{outline:0;border-color:var(--bronze-lit);background:r
 .tally div span{font-size:13.5px;color:var(--lamp-dim)}
 
 footer{
-  position:fixed;left:0;right:0;bottom:0;z-index:2;
+  position:fixed;left:0;right:0;bottom:0;z-index:1;
   text-align:center;font-size:12.5px;color:rgba(141,150,141,.75);
   padding:14px 20px;pointer-events:none;
 }
@@ -642,7 +745,131 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   </section>
 
   <!-- 1 ................................................. the door opens -->
-  <!-- 1b ................................................ the rule, shown -->
+
+  <!-- 1 ................................................. the room of tables -->
+  <section class="scene" data-scene="room">
+    <p class="line">One table is open. Three are waiting on their creator.</p>
+    <p class="sub">Nobody here is betting against anybody. They're bringing different things to the same problem, and each one settles on a date. The open one is at the top.</p>
+
+    <div class="tables">
+      <button class="tbl mine" type="button" data-go="rule">
+        <div class="tbl-top"><span class="tbl-where">Lagos &middot; this table</span><span class="tbl-when">settles 16 Sep 2026</span></div>
+        <h3>Will strangers put 20 minutes behind an idea that isn't theirs?</h3>
+        <p class="mile">Resolves yes if six of fifteen people send a written assessment.</p>
+        <div class="tbl-load">
+          <div><b>17 months</b>already down</div>
+          <div><b>20 minutes</b>asked of you</div>
+          <div><b class="dim">self-reported</b>and marked as such</div>
+        </div>
+      </button>
+
+      <button class="tbl" type="button" data-go="waiting">
+        <div class="tbl-top"><span class="tbl-where">Somalia &middot; business</span><span class="tbl-when">not yet open</span></div>
+        <h3>Can a failing shop reach 60% of its pre-collapse revenue in six months?</h3>
+        <p class="mile">Resolves on the owner's books, checked against supplier receipts.</p>
+        <div class="tbl-load">
+          <div><b>The business</b>put on the table</div>
+          <div><b>200 hours</b>turnaround work sought</div>
+          <div><b class="dim">public trace</b>receipts and filings</div>
+        </div>
+      </button>
+
+      <button class="tbl" type="button" data-go="waiting">
+        <div class="tbl-top"><span class="tbl-where">Comoros &middot; land</span><span class="tbl-when">not yet open</span></div>
+        <h3>Can allocated land be cleared and first-phase planting finished in nine months?</h3>
+        <p class="mile">Resolves on hectares planted, attested by the agricultural office.</p>
+        <div class="tbl-load">
+          <div><b>Land access</b>held and documented</div>
+          <div><b>Agronomy</b>expertise sought</div>
+          <div><b class="dim">attested</b>third party, paid by the creator</div>
+        </div>
+      </button>
+
+      <button class="tbl" type="button" data-go="waiting">
+        <div class="tbl-top"><span class="tbl-where">Northern Nigeria &middot; agriculture</span><span class="tbl-when">not yet open</span></div>
+        <h3>Do changed farming methods raise harvest yield 40% in one season?</h3>
+        <p class="mile">Resolves on weighed yield against the same plots last season.</p>
+        <div class="tbl-load">
+          <div><b>One season</b>of a farmer's ground</div>
+          <div><b>Method + hands</b>sought</div>
+          <div><b class="dim">public trace</b>weighbridge records</div>
+        </div>
+      </button>
+    </div>
+
+    <p class="roomnote">Three of these are propositions, not open tables. They open when their creator puts something down and names a result that can come out false. Until then they sit here as what the registry is for.</p>
+
+    <div class="acts">
+      <button class="go" type="button" data-go="rule">Sit at the open one</button>
+      <button class="away" type="button" data-go="relics">Look around the room first</button>
+    </div>
+  </section>
+
+  <!-- 1b ............................................... not yet -->
+  <section class="scene" data-scene="waiting">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
+    <p class="line">That one isn't open yet.</p>
+    <p class="sub">It's a proposition someone brought, not a table anyone can sit at. It opens when its creator puts something down and names a result that can come out false &mdash; the same two things asked of anyone here.</p>
+    <p class="terms">If it's yours, or you know whose it is, write to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>. The one table that is open is the one to sit at today.</p>
+    <div class="acts">
+      <button class="go" type="button" data-go="rule">Go to the open table</button>
+      <button class="away" type="button" data-back="1">Back to the room</button>
+    </div>
+  </section>
+
+
+  <!-- 1c ............................................... the room itself -->
+  <section class="scene" data-scene="relics">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
+    <p class="line">This is the actual table.</p>
+    <p class="sub">Not a drawing of one. Everything on it was put there by somebody, and every one of them cost something. Touch a light to find out what.</p>
+
+    <figure class="plate-photo" id="photo-table">
+      <img src="/img3-table.jpg" alt="A lit table in a room, with objects set down on it"
+           width="1200" height="1600" loading="lazy" decoding="async">
+      <button class="spot" style="left:51.5%;top:57.5%" data-relic="candle" aria-label="The candle"></button>
+      <button class="spot" style="left:45.5%;top:60.5%" data-relic="shell"  aria-label="The shell"></button>
+      <button class="spot" style="left:33%;top:68%"     data-relic="top"    aria-label="The table top"></button>
+      <button class="spot" style="left:50%;top:40%"     data-relic="seat"   aria-label="The seat"></button>
+      <figcaption>Touch a light. Four things were put down here.</figcaption>
+    </figure>
+
+    <div class="relic" id="relic" hidden>
+      <h4 id="relic-name">—</h4>
+      <dl>
+        <dt>What it is</dt><dd id="relic-what">—</dd>
+        <dt>Who put it there</dt><dd id="relic-who">—</dd>
+        <dt>When</dt><dd id="relic-when">—</dd>
+        <dt>What it cost</dt><dd id="relic-cost">—</dd>
+      </dl>
+    </div>
+
+    <p class="counted"><b id="found-count">0</b> of 4 found. Every object here is a stake somebody made: a thing, a person, a date, and a cost. That is the same four the protocol asks of any table.</p>
+
+    <div class="acts">
+      <button class="go" type="button" data-go="rule">Go to the open table</button>
+      <button class="away" type="button" data-go="shelves">See the shelves</button>
+    </div>
+  </section>
+
+  <!-- 1d ............................................... the shelves -->
+  <section class="scene" data-scene="shelves">
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
+    <p class="line">And this is what a record looks like when it's kept.</p>
+    <p class="sub">Shelves of things somebody decided were worth keeping, in the order they arrived. That is all a registry is. Stakeandwager keeps one for commitments instead of books &mdash; what was put down, what was claimed, and what reality said on the date.</p>
+
+    <figure class="plate-photo">
+      <img src="/img5-shelves.jpg" alt="A lit bookcase full of books" width="1000" height="1420" loading="lazy" decoding="async">
+      <figcaption>Nothing here is retrievable unless somebody wrote it down and kept it.</figcaption>
+    </figure>
+
+    <div class="acts">
+      <button class="go" type="button" data-go="rule">Go to the open table</button>
+      <button class="away" type="button" data-back="1">Back</button>
+    </div>
+  </section>
+
+  <!-- 2 ................................................ the rule, shown -->
   <section class="scene" data-scene="rule">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">You can't open a table with nothing on it.</p>
@@ -713,50 +940,86 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <section class="scene" data-scene="table">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <div class="room" id="room">
-      <svg viewBox="0 0 560 250" role="img" aria-label="A lit table with weight on one side and an empty place on the other">
+      <svg viewBox="0 0 560 300" role="img" aria-label="People gathered around a round table with a lit problem at its centre">
         <defs>
-          <radialGradient id="topsheen" cx="50%" cy="26%" r="72%">
-            <stop offset="0%" stop-color="#F2E7CB" stop-opacity=".9"/>
-            <stop offset="100%" stop-color="#C2B08C" stop-opacity="0"/>
+          <radialGradient id="terrain" cx="50%" cy="46%" r="54%">
+            <stop offset="0%"   stop-color="#FFEFC6" stop-opacity=".95"/>
+            <stop offset="42%"  stop-color="#D9A455" stop-opacity="0"/>
           </radialGradient>
-          <radialGradient id="seatglow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#C79A46" stop-opacity=".55"/>
+          <radialGradient id="core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"  stop-color="#FFF1CE" stop-opacity=".95"/>
+            <stop offset="55%" stop-color="#C79A46" stop-opacity=".45"/>
             <stop offset="100%" stop-color="#C79A46" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="woodtop" cx="50%" cy="34%" r="76%">
+            <stop offset="0%"   stop-color="#EFDDB4" stop-opacity=".92"/>
+            <stop offset="60%"  stop-color="#C6B08A" stop-opacity=".35"/>
+            <stop offset="100%" stop-color="#8E7748" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="spill" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#E9DEC6" stop-opacity=".20"/>
+            <stop offset="100%" stop-color="#E9DEC6" stop-opacity="0"/>
           </radialGradient>
         </defs>
 
-        <!-- chairs -->
-        <g stroke="#3A4B42" stroke-width="3" stroke-linecap="round" fill="none">
-          <path d="M104 74 v34 M172 74 v34 M104 84 h68 M104 96 h68"/>
-          <path d="M388 74 v34 M456 74 v34 M388 84 h68 M388 96 h68"/>
+        <!-- the light the table throws into the room -->
+        <ellipse cx="280" cy="176" rx="270" ry="112" fill="url(#spill)"/>
+
+        <!-- those already seated, facing in -->
+        <g id="gathered" fill="#26332C" stroke="#43574B" stroke-width="2">
+          <g><circle cx="128" cy="122" r="15"/><path d="M104 168 a24 26 0 0 1 48 0z"/></g>
+          <g><circle cx="242" cy="96"  r="15"/><path d="M218 142 a24 26 0 0 1 48 0z"/></g>
+          <g><circle cx="360" cy="98"  r="15"/><path d="M336 144 a24 26 0 0 1 48 0z"/></g>
+          <g><circle cx="452" cy="128" r="15"/><path d="M428 174 a24 26 0 0 1 48 0z"/></g>
         </g>
 
-        <!-- table -->
-        <ellipse cx="280" cy="212" rx="150" ry="20" fill="rgba(0,0,0,.45)"/>
-        <path d="M264 150 h32 v52 h-32z" fill="#4A3C24"/>
-        <ellipse cx="280" cy="202" rx="58" ry="11" fill="#5A4A2C"/>
-        <path d="M60 138 v13 a220 46 0 0 0 440 0 v-13z" fill="#6E5B39"/>
-        <ellipse cx="280" cy="138" rx="220" ry="46" fill="#BFAD8A"/>
-        <ellipse cx="280" cy="138" rx="220" ry="46" fill="url(#topsheen)"/>
-        <ellipse cx="280" cy="138" rx="196" ry="38" fill="none" stroke="rgba(90,74,44,.35)" stroke-width="1.2"/>
+        <!-- the seat kept open, nearest the reader -->
+        <g id="empty-seat" fill="none" stroke="rgba(199,154,70,.5)" stroke-width="2" stroke-dasharray="6 6">
+          <circle cx="280" cy="252" r="16"/>
+          <path d="M254 300 a26 28 0 0 1 52 0"/>
+        </g>
 
-        <!-- his side: the weight -->
-        <ellipse cx="168" cy="140" rx="46" ry="11" fill="rgba(60,44,20,.42)"/>
-        <path d="M126 130 a42 10 0 0 0 84 0 v-9 a42 10 0 0 0 -84 0z" fill="#7D5F2C"/>
-        <ellipse cx="168" cy="121" rx="42" ry="10" fill="#A8823C"/>
-        <path d="M130 114 a38 9 0 0 0 76 0 v-9 a38 9 0 0 0 -76 0z" fill="#7D5F2C"/>
-        <ellipse cx="168" cy="105" rx="38" ry="9" fill="#B99048"/>
-        <path d="M135 98 a33 8 0 0 0 66 0 v-9 a33 8 0 0 0 -66 0z" fill="#7D5F2C"/>
-        <ellipse cx="168" cy="89" rx="33" ry="8" fill="#C79A46"/>
+        <!-- the table -->
+        <ellipse cx="280" cy="214" rx="196" ry="58" fill="rgba(0,0,0,.42)"/>
+        <path d="M84 190 v10 a196 54 0 0 0 392 0 v-10z" fill="#6B5836"/>
+        <ellipse cx="280" cy="190" rx="196" ry="54" fill="#A48F62"/>
+        <ellipse cx="280" cy="190" rx="196" ry="54" fill="url(#woodtop)"/>
+        <ellipse cx="280" cy="190" rx="196" ry="54" fill="none" stroke="rgba(233,222,198,.18)" stroke-width="1"/>
 
-        <!-- your side: an empty place, then yours -->
-        <ellipse id="seat-glow" cx="392" cy="132" rx="72" ry="26" fill="url(#seatglow)"/>
-        <ellipse cx="392" cy="136" rx="46" ry="12" fill="none"
-                 stroke="rgba(90,74,44,.5)" stroke-width="1.4" stroke-dasharray="5 6"/>
+        <!-- the problem, lit, at the centre -->
+        <ellipse cx="280" cy="186" rx="112" ry="32" fill="url(#core)"/>
+        <g opacity=".92">
+          <path d="M214 190 q22 -16 48 -9 t44 -3 q26 -6 44 8 -20 14 -46 17 t-52 -1 q-24 -3 -38 -12z"
+                fill="#F0DEB0" opacity=".85"/>
+          <path d="M232 189 q20 -10 42 -5 t40 -2" fill="none" stroke="#8C6B33" stroke-width="1.2" opacity=".55"/>
+          <path d="M246 195 q26 6 52 1" fill="none" stroke="#8C6B33" stroke-width="1.2" opacity=".4"/>
+        </g>
+        <ellipse cx="280" cy="186" rx="118" ry="34" fill="none" stroke="rgba(199,154,70,.42)" stroke-width="1"/>
+
+        <!-- what each of them brought, set down around it -->
+        <g id="brought">
+          <g><ellipse cx="150" cy="196" rx="20" ry="6" fill="rgba(60,44,20,.4)"/>
+             <path d="M132 192 a18 5 0 0 0 36 0 v-7 a18 5 0 0 0 -36 0z" fill="#7D5F2C"/>
+             <ellipse cx="150" cy="185" rx="18" ry="5" fill="#B99048"/></g>
+          <g><ellipse cx="212" cy="211" rx="18" ry="5" fill="rgba(60,44,20,.4)"/>
+             <path d="M196 207 a16 4.5 0 0 0 32 0 v-6 a16 4.5 0 0 0 -32 0z" fill="#7D5F2C"/>
+             <ellipse cx="212" cy="201" rx="16" ry="4.5" fill="#C79A46"/></g>
+          <g><ellipse cx="352" cy="210" rx="18" ry="5" fill="rgba(60,44,20,.4)"/>
+             <path d="M336 206 a16 4.5 0 0 0 32 0 v-6 a16 4.5 0 0 0 -32 0z" fill="#7D5F2C"/>
+             <ellipse cx="352" cy="200" rx="16" ry="4.5" fill="#A8823C"/></g>
+          <g><ellipse cx="412" cy="196" rx="20" ry="6" fill="rgba(60,44,20,.4)"/>
+             <path d="M394 192 a18 5 0 0 0 36 0 v-7 a18 5 0 0 0 -36 0z" fill="#7D5F2C"/>
+             <ellipse cx="412" cy="185" rx="18" ry="5" fill="#B99048"/></g>
+        </g>
+
+        <!-- your place: empty, until it isn't -->
+        <ellipse id="seat-glow" cx="280" cy="222" rx="70" ry="22" fill="url(#core)" opacity="0"/>
+        <ellipse cx="280" cy="224" rx="40" ry="11" fill="none"
+                 stroke="rgba(233,222,198,.45)" stroke-width="1.4" stroke-dasharray="5 6"/>
         <g id="seat-stack">
-          <ellipse cx="392" cy="136" rx="40" ry="10" fill="rgba(60,44,20,.4)"/>
-          <path d="M356 130 a36 9 0 0 0 72 0 v-8 a36 9 0 0 0 -72 0z" fill="#7D5F2C"/>
-          <ellipse cx="392" cy="122" rx="36" ry="9" fill="#C79A46"/>
+          <ellipse cx="280" cy="224" rx="34" ry="9" fill="rgba(60,44,20,.42)"/>
+          <path d="M250 219 a30 8 0 0 0 60 0 v-8 a30 8 0 0 0 -60 0z" fill="#7D5F2C"/>
+          <ellipse cx="280" cy="211" rx="30" ry="8" fill="#C79A46"/>
         </g>
       </svg>
     </div>
@@ -971,48 +1234,86 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <p class="line">Both sides are loaded.</p>
 
     <div class="room settled">
-      <svg viewBox="0 0 560 250" role="img" aria-label="The table with weight on both sides">
+      <svg viewBox="0 0 560 300" role="img" aria-label="The same table, with your place taken">
         <defs>
-          <radialGradient id="d-sheen" cx="50%" cy="24%" r="74%">
-            <stop offset="0%" stop-color="#FBF0D6" stop-opacity=".95"/>
-            <stop offset="100%" stop-color="#C2B08C" stop-opacity="0"/>
+          <radialGradient id="d-terrain" cx="50%" cy="46%" r="54%">
+            <stop offset="0%"   stop-color="#FFEFC6" stop-opacity=".95"/>
+            <stop offset="42%"  stop-color="#D9A martian" stop-opacity=".9"/>
           </radialGradient>
-          <radialGradient id="d-bloom" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#E9DEC6" stop-opacity=".30"/>
-            <stop offset="100%" stop-color="#E9DEC6" stop-opacity="0"/>
+          <radialGradient id="d-core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"  stop-color="#FFF1CE" stop-opacity=".95"/>
+            <stop offset="55%" stop-color="#C79A46" stop-opacity=".45"/>
+            <stop offset="100%" stop-color="#C79A46" stop-opacity=".9"/>
+          </radialGradient>
+          <radialGradient id="d-wood" cx="50%" cy="34%" r="76%">
+            <stop offset="0%"   stop-color="#EFDDB4" stop-opacity=".92"/>
+            <stop offset="60%"  stop-color="#C6B08A" stop-opacity=".35"/>
+            <stop offset="100%" stop-color="#8E7748" stop-opacity=".9"/>
+          </radialGradient>
+          <radialGradient id="d-spill" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#E9DEC6" stop-opacity=".20"/>
+            <stop offset="100%" stop-color="#E9DEC6" stop-opacity=".9"/>
           </radialGradient>
         </defs>
 
-        <ellipse id="bloom" cx="280" cy="120" rx="280" ry="130" fill="url(#d-bloom)"/>
+        <!-- the light the table throws into the room -->
+        <ellipse cx="280" cy="176" rx="270" ry="112" fill="url(#d-spill)"/>
 
-        <g stroke="#4A5F54" stroke-width="3" stroke-linecap="round" fill="none">
-          <path d="M104 74 v34 M172 74 v34 M104 84 h68 M104 96 h68"/>
-          <path d="M388 74 v34 M456 74 v34 M388 84 h68 M388 96 h68"/>
+        <!-- those already seated, facing in -->
+        <g id="d-gathered" fill="#26332C" stroke="#43574B" stroke-width="2">
+          <g><circle cx="128" cy="122" r="15"/><path d="M104 168 a24 26 0 0 1 48 0z"/></g>
+          <g><circle cx="242" cy="96"  r="15"/><path d="M218 142 a24 26 0 0 1 48 0z"/></g>
+          <g><circle cx="360" cy="98"  r="15"/><path d="M336 144 a24 26 0 0 1 48 0z"/></g>
+          <g><circle cx="452" cy="128" r="15"/><path d="M428 174 a24 26 0 0 1 48 0z"/></g>
         </g>
 
-        <ellipse cx="280" cy="212" rx="150" ry="20" fill="rgba(0,0,0,.45)"/>
-        <path d="M264 150 h32 v52 h-32z" fill="#4A3C24"/>
-        <ellipse cx="280" cy="202" rx="58" ry="11" fill="#5A4A2C"/>
-        <path d="M60 138 v13 a220 46 0 0 0 440 0 v-13z" fill="#6E5B39"/>
-        <ellipse cx="280" cy="138" rx="220" ry="46" fill="#C6B491"/>
-        <ellipse cx="280" cy="138" rx="220" ry="46" fill="url(#d-sheen)"/>
-        <ellipse cx="280" cy="138" rx="196" ry="38" fill="none" stroke="rgba(90,74,44,.35)" stroke-width="1.2"/>
+        <!-- the seat kept open, nearest the reader -->
+        <g fill="#2E3D34" stroke="#C79A46" stroke-width="2">
+          <circle cx="280" cy="252" r="16"/>
+          <path d="M254 300 a26 28 0 0 1 52 0"/>
+        </g>
 
-        <!-- his side -->
-        <ellipse cx="168" cy="140" rx="46" ry="11" fill="rgba(60,44,20,.42)"/>
-        <path d="M126 130 a42 10 0 0 0 84 0 v-9 a42 10 0 0 0 -84 0z" fill="#7D5F2C"/>
-        <ellipse cx="168" cy="121" rx="42" ry="10" fill="#A8823C"/>
-        <path d="M130 114 a38 9 0 0 0 76 0 v-9 a38 9 0 0 0 -76 0z" fill="#7D5F2C"/>
-        <ellipse cx="168" cy="105" rx="38" ry="9" fill="#B99048"/>
-        <path d="M135 98 a33 8 0 0 0 66 0 v-9 a33 8 0 0 0 -66 0z" fill="#7D5F2C"/>
-        <ellipse cx="168" cy="89" rx="33" ry="8" fill="#C79A46"/>
+        <!-- the table -->
+        <ellipse cx="280" cy="214" rx="196" ry="58" fill="rgba(0,0,0,.42)"/>
+        <path d="M84 190 v10 a196 54 0 0 0 392 0 v-10z" fill="#6B5836"/>
+        <ellipse cx="280" cy="190" rx="196" ry="54" fill="#A48F62"/>
+        <ellipse cx="280" cy="190" rx="196" ry="54" fill="url(#d-wood)"/>
+        <ellipse cx="280" cy="190" rx="196" ry="54" fill="none" stroke="rgba(233,222,198,.18)" stroke-width="1"/>
 
-        <!-- your side -->
-        <ellipse cx="392" cy="140" rx="42" ry="10" fill="rgba(60,44,20,.42)"/>
-        <path d="M354 131 a38 9 0 0 0 76 0 v-8 a38 9 0 0 0 -76 0z" fill="#7D5F2C"/>
-        <ellipse cx="392" cy="123" rx="38" ry="9" fill="#B99048"/>
-        <path d="M358 116 a34 8 0 0 0 68 0 v-8 a34 8 0 0 0 -68 0z" fill="#7D5F2C"/>
-        <ellipse cx="392" cy="108" rx="34" ry="8" fill="#C79A46"/>
+        <!-- the problem, lit, at the centre -->
+        <ellipse cx="280" cy="186" rx="112" ry="32" fill="url(#d-core)"/>
+        <g opacity=".92">
+          <path d="M214 190 q22 -16 48 -9 t44 -3 q26 -6 44 8 -20 14 -46 17 t-52 -1 q-24 -3 -38 -12z"
+                fill="#F0DEB0" opacity=".85"/>
+          <path d="M232 189 q20 -10 42 -5 t40 -2" fill="none" stroke="#8C6B33" stroke-width="1.2" opacity=".55"/>
+          <path d="M246 195 q26 6 52 1" fill="none" stroke="#8C6B33" stroke-width="1.2" opacity=".4"/>
+        </g>
+        <ellipse cx="280" cy="186" rx="118" ry="34" fill="none" stroke="rgba(199,154,70,.42)" stroke-width="1"/>
+
+        <!-- what each of them brought, set down around it -->
+        <g id="d-brought">
+          <g><ellipse cx="150" cy="196" rx="20" ry="6" fill="rgba(60,44,20,.4)"/>
+             <path d="M132 192 a18 5 0 0 0 36 0 v-7 a18 5 0 0 0 -36 0z" fill="#7D5F2C"/>
+             <ellipse cx="150" cy="185" rx="18" ry="5" fill="#B99048"/></g>
+          <g><ellipse cx="212" cy="211" rx="18" ry="5" fill="rgba(60,44,20,.4)"/>
+             <path d="M196 207 a16 4.5 0 0 0 32 0 v-6 a16 4.5 0 0 0 -32 0z" fill="#7D5F2C"/>
+             <ellipse cx="212" cy="201" rx="16" ry="4.5" fill="#C79A46"/></g>
+          <g><ellipse cx="352" cy="210" rx="18" ry="5" fill="rgba(60,44,20,.4)"/>
+             <path d="M336 206 a16 4.5 0 0 0 32 0 v-6 a16 4.5 0 0 0 -32 0z" fill="#7D5F2C"/>
+             <ellipse cx="352" cy="200" rx="16" ry="4.5" fill="#A8823C"/></g>
+          <g><ellipse cx="412" cy="196" rx="20" ry="6" fill="rgba(60,44,20,.4)"/>
+             <path d="M394 192 a18 5 0 0 0 36 0 v-7 a18 5 0 0 0 -36 0z" fill="#7D5F2C"/>
+             <ellipse cx="412" cy="185" rx="18" ry="5" fill="#B99048"/></g>
+        </g>
+
+        <!-- your place: empty, until it isn't -->
+        <ellipse id="bloom" cx="280" cy="222" rx="70" ry="22" fill="url(#d-core)" opacity=".9"/>
+
+        <g id="d-taken">
+          <ellipse cx="280" cy="224" rx="34" ry="9" fill="rgba(60,44,20,.42)"/>
+          <path d="M250 219 a30 8 0 0 0 60 0 v-8 a30 8 0 0 0 -60 0z" fill="#7D5F2C"/>
+          <ellipse cx="280" cy="211" rx="30" ry="8" fill="#C79A46"/>
+        </g>
       </svg>
     </div>
 
@@ -1149,7 +1450,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 14</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 19</span>
 </footer>
 
 <script>
@@ -1162,7 +1463,11 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   var MACHINE = {
     outside:     { event:"scene_outside" },
-    rule:        { event:"scene_rule",        onEnter:function(){ document.body.classList.add("inside"); } },
+    room:        { event:"scene_room",        onEnter:function(){ document.body.classList.add("inside"); } },
+    waiting:     { event:"scene_waiting" },
+    relics:      { event:"scene_relics" },
+    shelves:     { event:"scene_shelves" },
+    rule:        { event:"scene_rule" },
     table:       { event:"scene_table" },
     proposition: { event:"scene_proposition" },
     decision:    { event:"scene_decision" },
@@ -1210,7 +1515,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   /* ---- the light: it climbs as they go in ---- */
   var LIGHT = {
-    outside:0, rule:1, table:2, proposition:2, decision:3, walkaway:3,
+    outside:0, room:1, waiting:1, relics:1, shelves:1, rule:1, table:2, proposition:2, decision:3, walkaway:3,
     sit:3, loaded:4, task:4, done:5, closed:5, open:5, opened:5
   };
   function lightTo(state){
@@ -1222,7 +1527,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   /* ---- the ladder: where they are ---- */
   var RUNG = {
     outside:null,
-    rule:"interest", table:"interest", proposition:"interest",
+    room:"interest", waiting:"interest", relics:"interest", shelves:"interest", rule:"interest", table:"interest", proposition:"interest",
     decision:"interest", walkaway:"interest",
     sit:"wager", loaded:"wager",
     task:"contribution",
@@ -1391,7 +1696,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     clearTimeout(idle);
     knock.disabled = true;
     knock.classList.add("rapping");
-    setTimeout(function(){ go("rule"); }, 950);
+    setTimeout(function(){ go("room"); }, 950);
   });
 
   /* ---- every other transition ---- */
@@ -1766,6 +2071,70 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       f.select(); f.setSelectionRange(0, 99999);
       try{ document.execCommand("copy"); copy.textContent = "Copied"; }catch(e){}
       setTimeout(function(){ copy.textContent = "Copy"; }, 1600);
+    });
+  })();
+
+  /* ---- the things in the room ----
+     each one is a stake: a thing, a person, a date, a cost.
+     the words are the creator's to write; the structure is the protocol's. */
+  (function(){
+    var panel = document.getElementById("relic");
+    if(!panel) return;
+
+    var RELICS = {
+      candle: {
+        name:"The candle",
+        what:"NEEDS YOUR WORDS \u2014 what it is",
+        who: "NEEDS YOUR WORDS \u2014 who put it there",
+        when:"NEEDS YOUR WORDS \u2014 when",
+        cost:"NEEDS YOUR WORDS \u2014 what it cost them"
+      },
+      shell: {
+        name:"The shell",
+        what:"NEEDS YOUR WORDS \u2014 what it is",
+        who: "NEEDS YOUR WORDS \u2014 who carried it here",
+        when:"NEEDS YOUR WORDS \u2014 when",
+        cost:"NEEDS YOUR WORDS \u2014 what it cost to bring"
+      },
+      top: {
+        name:"The table top",
+        what:"NEEDS YOUR WORDS \u2014 the parquet, who made it, from what",
+        who: "NEEDS YOUR WORDS \u2014 whose hands",
+        when:"NEEDS YOUR WORDS \u2014 when",
+        cost:"NEEDS YOUR WORDS \u2014 the hours in it"
+      },
+      seat: {
+        name:"The seat",
+        what:"NEEDS YOUR WORDS \u2014 what it is",
+        who: "NEEDS YOUR WORDS \u2014 who sat in it before you",
+        when:"NEEDS YOUR WORDS \u2014 how long it has been here",
+        cost:"NEEDS YOUR WORDS \u2014 what keeping it costs"
+      }
+    };
+
+    var found = {}, count = document.getElementById("found-count");
+
+    function show(key, btn){
+      var r = RELICS[key];
+      if(!r) return;
+      Array.prototype.forEach.call(document.querySelectorAll(".spot"), function(s){
+        s.classList.toggle("open", s === btn);
+      });
+      document.getElementById("relic-name").textContent = r.name;
+      document.getElementById("relic-what").textContent = r.what;
+      document.getElementById("relic-who").textContent  = r.who;
+      document.getElementById("relic-when").textContent = r.when;
+      document.getElementById("relic-cost").textContent = r.cost;
+      panel.removeAttribute("hidden");
+      if(!found[key]){
+        found[key] = true;
+        if(count) count.textContent = Object.keys(found).length;
+      }
+      if(panel.scrollIntoView) panel.scrollIntoView({block:"nearest", behavior:"smooth"});
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll(".spot"), function(b){
+      b.addEventListener("click", function(){ show(b.getAttribute("data-relic"), b); });
     });
   })();
 
