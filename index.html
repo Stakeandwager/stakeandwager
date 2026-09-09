@@ -66,11 +66,11 @@ body{transition:background-color 1.6s ease}
 body.inside #glow{opacity:1}
 
 /* the light climbs the further in you go */
-body.lit-1{background:#101815}  body.lit-1 #glow{opacity:.45}
-body.lit-2{background:#131B18}  body.lit-2 #glow{opacity:.65}
-body.lit-3{background:#161F1B}  body.lit-3 #glow{opacity:.85}
-body.lit-4{background:#1A241F}  body.lit-4 #glow{opacity:1}
-body.lit-5{background:#1E2A24}  body.lit-5 #glow{opacity:1.15}
+body.lit-1{background:#101815}  body.lit-1 #glow{opacity:.30}
+body.lit-2{background:#131B18}  body.lit-2 #glow{opacity:.40}
+body.lit-3{background:#161F1B}  body.lit-3 #glow{opacity:.50}
+body.lit-4{background:#1A241F}  body.lit-4 #glow{opacity:.60}
+body.lit-5{background:#1E2A24}  body.lit-5 #glow{opacity:.70}
 #stage{position:relative;z-index:2;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 24px}
 
 .scene{display:none;width:100%;max-width:660px;text-align:left;position:relative;z-index:3}
@@ -84,6 +84,9 @@ body.lit-5{background:#1E2A24}  body.lit-5 #glow{opacity:1.15}
 }
 
 /* ---------- typography ---------- */
+.line, .sub, .terms, .whose, .counted, .seated, .quiet{
+  text-shadow:0 1px 14px rgba(11,18,15,.95), 0 0 34px rgba(11,18,15,.75);
+}
 .line{
   font-family:"Spectral",Georgia,serif;font-weight:400;
   font-size:clamp(25px,4.6vw,33px);line-height:1.25;
@@ -113,8 +116,8 @@ body.at-door #doorway{opacity:1;transform:scale(1)}
 #doorway::after{
   content:"";position:absolute;inset:0;
   background:
-    linear-gradient(100deg, rgba(11,18,15,.96) 0%, rgba(11,18,15,.90) 38%, rgba(11,18,15,.60) 66%, rgba(11,18,15,.46) 100%),
-    radial-gradient(120% 90% at 22% 46%, rgba(11,18,15,.52), rgba(11,18,15,0) 72%);
+    linear-gradient(100deg, rgba(11,18,15,.92) 0%, rgba(11,18,15,.78) 34%, rgba(11,18,15,.34) 60%, rgba(11,18,15,.12) 100%),
+    radial-gradient(110% 85% at 20% 46%, rgba(11,18,15,.40), rgba(11,18,15,0) 74%);
 }
 @media (max-width:760px){
   #doorway{background-position:62% center}
@@ -128,8 +131,8 @@ body.at-door #doorway{opacity:1;transform:scale(1)}
 body.in-room #doorway{opacity:1;transform:scale(1)}
 body.in-room #doorway::after{
   background:
-    linear-gradient(100deg, rgba(11,18,15,.97) 0%, rgba(11,18,15,.94) 42%, rgba(11,18,15,.80) 72%, rgba(11,18,15,.72) 100%),
-    radial-gradient(130% 100% at 30% 50%, rgba(11,18,15,.60), rgba(11,18,15,0) 76%);
+    linear-gradient(100deg, rgba(11,18,15,.94) 0%, rgba(11,18,15,.86) 40%, rgba(11,18,15,.50) 70%, rgba(11,18,15,.26) 100%),
+    radial-gradient(120% 95% at 28% 50%, rgba(11,18,15,.42), rgba(11,18,15,0) 78%);
 }
 @media (max-width:760px){
   body.in-room #doorway::after{
@@ -313,11 +316,13 @@ body.stepping-in #doorway{opacity:0;transform:scale(1.32);filter:blur(3px)}
 .panel{
   border:1px solid rgba(233,222,198,.13);border-radius:3px;
   padding:22px 20px 24px;margin:22px 0 0;max-width:100%;text-align:left;
-  background:radial-gradient(130% 100% at 50% 0%, rgba(233,222,198,.045), rgba(233,222,198,0) 72%);
+  background:linear-gradient(180deg, rgba(11,18,15,.72), rgba(11,18,15,.58));
+  backdrop-filter:blur(4px);
 }
 .panel.lit{
   border-color:rgba(199,154,70,.3);
-  background:radial-gradient(130% 100% at 50% 0%, rgba(199,154,70,.10), rgba(233,222,198,0) 72%);
+  background:linear-gradient(180deg, rgba(30,22,8,.74), rgba(11,18,15,.62));
+  backdrop-filter:blur(4px);
 }
 .panel > :first-child{margin-top:0}
 .panel > :last-child{margin-bottom:0}
@@ -537,9 +542,9 @@ body.walking .ladder{display:flex}
 
 /* ---------- the table ---------- */
 .table{
-  background:linear-gradient(180deg, rgba(233,222,198,.055), rgba(233,222,198,.02));
+  background:linear-gradient(180deg, rgba(11,18,15,.74), rgba(11,18,15,.60));
   color:var(--lamp);
-  border:1px solid rgba(233,222,198,.14);
+  border:1px solid rgba(233,222,198,.16);
   border-radius:3px;padding:24px 22px 26px;margin:26px 0 0;text-align:left;
   backdrop-filter:blur(3px);
 }
@@ -1280,7 +1285,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 23</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 24</span>
 </footer>
 
 <script>
