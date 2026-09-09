@@ -100,20 +100,81 @@ body.lit-3 #lamp{opacity:.86} body.lit-4 #lamp{opacity:1} body.lit-5 #lamp{opaci
 }
 .known[hidden]{display:none}
 
+/* ---------- the room behind everything ----------
+   one layer, one image at a time, keyed to where they are on the ladder */
+#doorway{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:#0B120F center right / cover no-repeat;
+  background-image:url('/door-bg-sm.jpg');
+  opacity:0;transition:opacity 1.5s ease, transform 1.2s cubic-bezier(.3,.7,.3,1), filter 1.2s ease;
+  transform:scale(1.04);
+}
+@media (min-width:900px){ #doorway{background-image:url('/door-bg.jpg')} }
+body.at-door #doorway{opacity:1;transform:scale(1)}
+
+/* the scrim: what keeps every word readable, whatever is behind it */
+#doorway::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(100deg, rgba(11,18,15,.96) 0%, rgba(11,18,15,.90) 38%, rgba(11,18,15,.60) 66%, rgba(11,18,15,.46) 100%),
+    radial-gradient(120% 90% at 22% 46%, rgba(11,18,15,.52), rgba(11,18,15,0) 72%);
+}
+@media (max-width:760px){
+  #doorway{background-position:62% center}
+  #doorway::after{
+    background:linear-gradient(to bottom, rgba(11,18,15,.94) 0%, rgba(11,18,15,.90) 40%, rgba(11,18,15,.74) 72%, rgba(11,18,15,.88) 100%);
+  }
+  #stage{align-items:flex-start;padding-top:64px}
+}
+
+/* deeper in, the room stays but sinks further back so the reading stays easy */
+body.in-room #doorway{opacity:1;transform:scale(1)}
+body.in-room #doorway::after{
+  background:
+    linear-gradient(100deg, rgba(11,18,15,.97) 0%, rgba(11,18,15,.94) 42%, rgba(11,18,15,.80) 72%, rgba(11,18,15,.72) 100%),
+    radial-gradient(130% 100% at 30% 50%, rgba(11,18,15,.60), rgba(11,18,15,0) 76%);
+}
+@media (max-width:760px){
+  body.in-room #doorway::after{
+    background:linear-gradient(to bottom, rgba(11,18,15,.96) 0%, rgba(11,18,15,.93) 44%, rgba(11,18,15,.88) 100%);
+  }
+}
+
+/* which room you are standing in depends on how far you have come */
+body.rung-wager        #doorway{background-image:url('/bg-table-sm.jpg')}
+body.rung-contribution #doorway{background-image:url('/bg-room-sm.jpg')}
+body.rung-stake        #doorway{background-image:url('/bg-wide-sm.jpg')}
+body.seated            #doorway{background-image:url('/bg-seat-sm.jpg')}
+@media (min-width:900px){
+  body.rung-wager        #doorway{background-image:url('/bg-table.jpg')}
+  body.rung-contribution #doorway{background-image:url('/bg-room.jpg')}
+  body.rung-stake        #doorway{background-image:url('/bg-wide.jpg')}
+  body.seated            #doorway{background-image:url('/bg-seat.jpg')}
+}
+
+/* walking through: the room grows and the door dissolves */
+body.stepping-in #doorway{opacity:0;transform:scale(1.32);filter:blur(3px)}
+
+.scene[data-scene="outside"]{text-align:left;max-width:520px;margin-right:auto}
+@media (max-width:760px){
+  .scene[data-scene="outside"]{text-align:center;max-width:100%}
+}
+
 /* ---------- scene 0: outside, the door ---------- */
 .bell{
-  text-align:center;
-  font-family:"Spectral",Georgia,serif;font-weight:300;
-  font-size:clamp(21px,4.4vw,29px);line-height:1.25;letter-spacing:-0.015em;
-  color:var(--lamp);margin:0 auto;max-width:18ch;min-height:2.5em;
+  font-family:"IBM Plex Sans",sans-serif;font-weight:400;
+  font-size:16.5px;line-height:1.5;letter-spacing:0;
+  color:var(--lamp-dim);margin:0;max-width:30ch;min-height:3em;
   transition:opacity .34s ease;
 }
+@media (max-width:760px){.bell{margin:0 auto;text-align:center}
+.door{margin:26px auto 0}}
 .bell.fading{opacity:0}
 
 .door{
   position:relative;display:block;
-  width:min(196px,52vw);height:min(310px,78vw);
-  margin:32px auto 0;padding:0;cursor:pointer;
+  width:min(150px,44vw);height:min(232px,66vw);
+  margin:26px 0 0;padding:0;cursor:pointer;
   border:1px solid rgba(233,222,198,.15);border-radius:3px 3px 0 0;
   background:linear-gradient(178deg,#0A110E 0%,#0C130F 62%,#0A0F0C 100%);
   box-shadow:
@@ -359,7 +420,7 @@ body.walking .ladder{display:flex}
 
 /* ---------- the room, photographed ---------- */
 .plate-photo{
-  position:relative;margin:24px 0 0;border-radius:3px;overflow:hidden;
+  position:relative;margin:20px 0 0;border-radius:3px;overflow:hidden;
   background:#0E1613;
   box-shadow:0 30px 70px -34px rgba(0,0,0,.85), inset 0 0 0 1px rgba(233,222,198,.10);
 }
@@ -702,6 +763,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </style>
 </head>
 <body>
+<div id="doorway" aria-hidden="true"></div>
 <div id="glow"></div>
 <svg id="lamp" viewBox="0 0 560 300" aria-hidden="true">
   <defs>
@@ -737,6 +799,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <!-- 0 ................................................. outside -->
   <section class="scene on" data-scene="outside">
     <p class="known" id="known" hidden>Welcome back, <span class="handle" id="known-handle" style="cursor:default;border-bottom-style:solid"></span>. <button class="handle" id="forget-me" type="button" style="font-size:.82em">not you?</button></p>
+    <p class="line" style="max-width:14ch;margin-bottom:10px">There is a table inside.</p>
     <p class="bell" id="bell">You got 20 minutes?</p>
     <button class="door" id="knock" type="button" aria-label="Knock on the door">
       <span class="knocker"></span>
@@ -821,8 +884,8 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   <!-- 1c ............................................... the room itself -->
   <section class="scene" data-scene="relics">
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
-    <p class="line">This is the actual table.</p>
-    <p class="sub">Not a drawing of one. Everything on it was put there by somebody, and every one of them cost something. Touch a light to find out what.</p>
+    <p class="line">This is the actual room.</p>
+    <p class="sub">Not a drawing of one. Everything in here was put down by somebody, and every one of them cost something. Touch a light to find out what.</p>
 
     <figure class="plate-photo" id="photo-table">
       <img src="/img3-table.jpg" alt="A lit table in a room, with objects set down on it"
@@ -831,41 +894,31 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       <button class="spot" style="left:45.5%;top:60.5%" data-relic="shell"  aria-label="The shell"></button>
       <button class="spot" style="left:33%;top:68%"     data-relic="top"    aria-label="The table top"></button>
       <button class="spot" style="left:50%;top:40%"     data-relic="seat"   aria-label="The seat"></button>
-      <figcaption>Touch a light. Four things were put down here.</figcaption>
+      <figcaption>The table. Four things were put down here.</figcaption>
+    </figure>
+
+    <figure class="plate-photo" id="photo-shelves">
+      <img src="/img5-shelves.jpg" alt="A lit bookcase full of books"
+           width="1000" height="1420" loading="lazy" decoding="async">
+      <button class="spot" style="left:57%;top:62%" data-relic="shelves" aria-label="The shelves"></button>
+      <button class="spot" style="left:52%;top:26%" data-relic="lamp"    aria-label="The lamp"></button>
+      <figcaption>The shelves. Nothing here is retrievable unless somebody kept it.</figcaption>
     </figure>
 
     <div class="relic" id="relic" hidden>
-      <h4 id="relic-name">—</h4>
+      <h4 id="relic-name">&mdash;</h4>
       <dl>
-        <dt>What it is</dt><dd id="relic-what">—</dd>
-        <dt>Who put it there</dt><dd id="relic-who">—</dd>
-        <dt>When</dt><dd id="relic-when">—</dd>
-        <dt>What it cost</dt><dd id="relic-cost">—</dd>
+        <dt>What it is</dt><dd id="relic-what">&mdash;</dd>
+        <dt>Who put it there</dt><dd id="relic-who">&mdash;</dd>
+        <dt>When</dt><dd id="relic-when">&mdash;</dd>
+        <dt>What it cost</dt><dd id="relic-cost">&mdash;</dd>
       </dl>
     </div>
 
-    <p class="counted"><b id="found-count">0</b> of 4 found. Every object here is a stake somebody made: a thing, a person, a date, and a cost. That is the same four the protocol asks of any table.</p>
+    <p class="counted"><b id="found-count">0</b> of 6 found. Every object here is a stake somebody made: a thing, a person, a date, and a cost. That is the same four the protocol asks of any table.</p>
 
     <div class="acts">
       <button class="go" type="button" data-go="rule">Go to the open table</button>
-      <button class="away" type="button" data-go="shelves">See the shelves</button>
-    </div>
-  </section>
-
-  <!-- 1d ............................................... the shelves -->
-  <section class="scene" data-scene="shelves">
-    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
-    <p class="line">And this is what a record looks like when it's kept.</p>
-    <p class="sub">Shelves of things somebody decided were worth keeping, in the order they arrived. That is all a registry is. Stakeandwager keeps one for commitments instead of books &mdash; what was put down, what was claimed, and what reality said on the date.</p>
-
-    <figure class="plate-photo">
-      <img src="/img5-shelves.jpg" alt="A lit bookcase full of books" width="1000" height="1420" loading="lazy" decoding="async">
-      <figcaption>Nothing here is retrievable unless somebody wrote it down and kept it.</figcaption>
-    </figure>
-
-    <div class="acts">
-      <button class="go" type="button" data-go="rule">Go to the open table</button>
-      <button class="away" type="button" data-back="1">Back</button>
     </div>
   </section>
 
@@ -1450,7 +1503,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 19</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 22</span>
 </footer>
 
 <script>
@@ -1462,11 +1515,10 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
      and what happens on the way in. Nothing else reaches into the DOM. */
 
   var MACHINE = {
-    outside:     { event:"scene_outside" },
+    outside:     { event:"scene_outside", onEnter:function(){ document.body.classList.add("at-door"); } },
     room:        { event:"scene_room",        onEnter:function(){ document.body.classList.add("inside"); } },
     waiting:     { event:"scene_waiting" },
     relics:      { event:"scene_relics" },
-    shelves:     { event:"scene_shelves" },
     rule:        { event:"scene_rule" },
     table:       { event:"scene_table" },
     proposition: { event:"scene_proposition" },
@@ -1488,6 +1540,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   var current = "outside";
   var trail   = [];
+  document.body.classList.add("at-door");
 
   function go(next, returning){
     if(!returning && MACHINE[next] && next !== current) trail.push(current);
@@ -1507,6 +1560,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     if(MACHINE[next].onEnter) MACHINE[next].onEnter();
     ladderTo(next);
     lightTo(next);
+    roomTo(next);
     remember(next);
     window.scrollTo(0,0);
     var h = scenes[next].querySelector(".line");
@@ -1515,9 +1569,18 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   /* ---- the light: it climbs as they go in ---- */
   var LIGHT = {
-    outside:0, room:1, waiting:1, relics:1, shelves:1, rule:1, table:2, proposition:2, decision:3, walkaway:3,
+    outside:0, room:1, waiting:1, relics:1, rule:1, table:2, proposition:2, decision:3, walkaway:3,
     sit:3, loaded:4, task:4, done:5, closed:5, open:5, opened:5
   };
+  function roomTo(state){
+    var b = document.body, at = RUNG[state];
+    b.classList.remove("rung-interest","rung-wager","rung-contribution","rung-stake");
+    b.classList.toggle("in-room", state !== "outside");
+    if(at) b.classList.add("rung-" + at);
+    /* once they have taken the seat, the room is the one seen from it */
+    b.classList.toggle("seated", state === "loaded" || state === "task");
+  }
+
   function lightTo(state){
     var n = LIGHT[state] || 0, b = document.body;
     for(var i=1;i<=5;i++) b.classList.remove("lit-"+i);
@@ -1527,7 +1590,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   /* ---- the ladder: where they are ---- */
   var RUNG = {
     outside:null,
-    room:"interest", waiting:"interest", relics:"interest", shelves:"interest", rule:"interest", table:"interest", proposition:"interest",
+    room:"interest", waiting:"interest", relics:"interest", rule:"interest", table:"interest", proposition:"interest",
     decision:"interest", walkaway:"interest",
     sit:"wager", loaded:"wager",
     task:"contribution",
@@ -1696,7 +1759,11 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     clearTimeout(idle);
     knock.disabled = true;
     knock.classList.add("rapping");
-    setTimeout(function(){ go("room"); }, 950);
+    setTimeout(function(){ document.body.classList.add("stepping-in"); }, 780);
+    setTimeout(function(){
+      go("room");
+      document.body.classList.remove("at-door","stepping-in");
+    }, 1350);
   });
 
   /* ---- every other transition ---- */
@@ -2102,6 +2169,20 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         who: "NEEDS YOUR WORDS \u2014 whose hands",
         when:"NEEDS YOUR WORDS \u2014 when",
         cost:"NEEDS YOUR WORDS \u2014 the hours in it"
+      },
+      shelves: {
+        name:"The shelves",
+        what:"NEEDS YOUR WORDS \u2014 what is kept here",
+        who: "NEEDS YOUR WORDS \u2014 who gathered them",
+        when:"NEEDS YOUR WORDS \u2014 over how long",
+        cost:"NEEDS YOUR WORDS \u2014 what keeping a record costs"
+      },
+      lamp: {
+        name:"The lamp",
+        what:"NEEDS YOUR WORDS \u2014 what it is",
+        who: "NEEDS YOUR WORDS \u2014 whose it was",
+        when:"NEEDS YOUR WORDS \u2014 when",
+        cost:"NEEDS YOUR WORDS \u2014 what it cost to keep lit"
       },
       seat: {
         name:"The seat",
