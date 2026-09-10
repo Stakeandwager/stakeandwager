@@ -9,7 +9,7 @@
 
   Proprietary. See LICENSE. Reproduction, modification or hosting of this
   material, in whole or in part, requires prior written permission.
-  joo@stakeandwager.com
+  sw@stakeandwager.com
 -->
 <html lang="en">
 <head>
@@ -480,6 +480,47 @@ body.walking .ladder{display:flex}
 }
 .counted b{color:#E4C88A;font-weight:500}
 
+/* ---------- the record ---------- */
+.entry-card{
+  border:1px solid rgba(233,222,198,.14);border-radius:3px;
+  background:linear-gradient(180deg, rgba(11,18,15,.74), rgba(11,18,15,.60));
+  backdrop-filter:blur(4px);
+  padding:22px 22px 24px;margin:20px 0 0;
+}
+.entry-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.entry-ref{font-size:12.5px;color:var(--lamp-dim);font-variant-numeric:tabular-nums}
+.state{
+  font-size:12px;letter-spacing:.02em;padding:4px 10px;border-radius:2px;
+  border:1px solid rgba(233,222,198,.22);color:var(--lamp-dim);
+}
+.state.open{border-color:rgba(199,154,70,.5);color:#E4C88A;background:rgba(199,154,70,.10)}
+.state.failed{border-color:rgba(233,222,198,.3);color:var(--lamp)}
+.state.achieved{border-color:rgba(199,154,70,.5);color:#E4C88A}
+
+.entry-card h3{
+  margin:9px 0 0;font-family:"Spectral",Georgia,serif;font-weight:400;
+  font-size:clamp(19px,3.4vw,24px);line-height:1.25;letter-spacing:-0.015em;color:#F1E7D2;
+}
+.entry-card dl{margin:15px 0 0;display:grid;grid-template-columns:132px 1fr;gap:9px 18px;font-size:13.5px}
+.entry-card dt{color:var(--lamp-dim);margin:0}
+.entry-card dd{margin:0;color:var(--lamp)}
+
+.awaiting{
+  margin:17px 0 0;border-top:1px solid rgba(233,222,198,.13);padding-top:14px;
+  font-size:13.5px;color:var(--lamp-dim);line-height:1.6;
+}
+.awaiting b{color:#E4C88A;font-weight:500}
+
+.said-plain{
+  margin:16px 0 0;padding:13px 15px;border-left:2px solid rgba(233,222,198,.22);
+  background:rgba(233,222,198,.03);
+  font-size:13.5px;color:var(--lamp);line-height:1.6;
+}
+.said-plain span{display:block;margin-top:7px;font-size:12px;color:var(--lamp-dim)}
+
+.chain{margin:20px 0 0;font-size:13.5px;color:var(--lamp-dim);line-height:1.7}
+.chain b{color:var(--lamp);font-weight:400}
+
 /* ---------- the room: tables that are open ---------- */
 .tables{display:grid;gap:12px;margin:24px 0 0}
 .tbl{
@@ -845,6 +886,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <div class="acts">
       <button class="go" type="button" data-go="rule">Sit at the open one</button>
       <button class="away" type="button" data-go="relics">Look around the room first</button>
+      <button class="away" type="button" data-go="closed">The record</button>
     </div>
   </section>
 
@@ -853,7 +895,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
     <p class="line">That one isn't open yet.</p>
     <p class="sub">It's a proposition someone brought, not a table anyone can sit at. It opens when its creator puts something down and names a result that can come out false &mdash; the same two things asked of anyone here.</p>
-    <p class="terms">If it's yours, or you know whose it is, write to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>. The one table that is open is the one to sit at today.</p>
+    <p class="terms">If it's yours, or you know whose it is, write to <a href="mailto:sw@stakeandwager.com" style="color:var(--lamp)">sw@stakeandwager.com</a>. The one table that is open is the one to sit at today.</p>
     <div class="acts">
       <button class="go" type="button" data-go="rule">Go to the open table</button>
       <button class="away" type="button" data-back="1">Back to the room</button>
@@ -1164,9 +1206,10 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
     </div>
 
     <p class="sub">One email on <time datetime="2026-09-23">23 September</time>: whether six people came through, what the answers had in common, and what changed because of yours. If it resolves no, the same email says so.</p>
-    <p class="terms">Anything you want to add later goes to <a href="mailto:joo@stakeandwager.com" style="color:var(--lamp)">joo@stakeandwager.com</a>. If it is something you will actually do rather than something you might, say so plainly — that is the part being measured.</p>
+    <p class="terms">Anything you want to add later goes to <a href="mailto:sw@stakeandwager.com" style="color:var(--lamp)">sw@stakeandwager.com</a>. If it is something you will actually do rather than something you might, say so plainly — that is the part being measured.</p>
     <div class="acts">
       <button class="go" type="button" data-go="open">Open a table of your own</button>
+      <button class="away" type="button" data-go="closed">See the record</button>
       <button class="away" type="button" id="leave">Return to the doorway</button>
     </div>
   </section>
@@ -1263,15 +1306,33 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 
   <!-- 8 ................................................. resolution -->
   <section class="scene" data-scene="closed">
-    <p class="line">The table has closed.</p>
-    <div class="tally">
-      <div><b>15</b><span>invited</span></div>
-      <div><b>—</b><span>sat down</span></div>
-      <div><b>—</b><span>completed</span></div>
-      <div><b>—</b><span>escalated</span></div>
+    <div class="backbar"><button class="back" type="button" data-back="1"><svg viewBox="0 0 24 24"><path d="M14.5 6.5L9 12l5.5 5.5"/></svg>Back</button></div>
+    <p class="line">The record.</p>
+    <p class="sub">Every table that has been opened here, and what reality said about it. Results are published whichever way they go. Nothing is removed.</p>
+
+    <div class="entry-card">
+      <div class="entry-head">
+        <span class="entry-ref">Wager 001 &middot; opened 2 September 2026</span>
+        <span class="state open">Open</span>
+      </div>
+      <h3>Will strangers put 20 minutes behind an idea that isn't theirs?</h3>
+      <dl>
+        <dt>Creator</dt><dd>@joo</dd>
+        <dt>Already down</dt><dd>17 months, and 28 hours over a fortnight</dd>
+        <dt>Resolves yes if</dt><dd>Six of fifteen send a written assessment</dd>
+        <dt>Settles on</dt><dd>16 September 2026</dd>
+        <dt>Verified by</dt><dd>The creator reports it. Not independent, and this record says so.</dd>
+        <dt>Follows</dt><dd>&mdash;</dd>
+      </dl>
+      <p class="awaiting"><b>Not yet resolved.</b> The result goes here on the date, yes or no. If it is no, it says no.</p>
     </div>
-    <p class="sub">Six or more and it's a yes. Five or fewer and it's a no, published as a no.</p>
-    <p class="terms">For this first one I'm the person reporting the result on my own wager. That isn't independent, and I'm not pretending it is.</p>
+
+    <p class="chain">
+      Nothing has closed yet, so there is no chain to read.<br>
+      When there is, it will be shown as a sequence rather than a score: what was claimed, what was staked, what happened, and what the same person put down next.
+    </p>
+
+    <p class="terms">This record does not explain outcomes. A creator may attach their own account of what happened; it is kept, timestamped and attributed, and it is never treated as evidence. If they believe it, they can put it on the next table and let reality answer.</p>
   </section>
 
 
@@ -1285,7 +1346,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 24</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 26</span>
 </footer>
 
 <script>
@@ -1613,7 +1674,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
       if(k === "form-name" || k === "bot-field" || !String(v).trim()) return;
       lines.push(k.replace(/_/g," ") + ":\n" + v + "\n");
     });
-    return "mailto:joo@stakeandwager.com?subject=" +
+    return "mailto:sw@stakeandwager.com?subject=" +
       encodeURIComponent("Wager 001 " + (form.id === "pass-form" ? "passing" : "my answers")) +
       "&body=" + encodeURIComponent(lines.join("\n"));
   }
@@ -1902,7 +1963,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
         "Verified by: " + TIERNAME[tier] + "\n" +
         "Locked: " + table.locked + "\n";
       document.getElementById("send-table").setAttribute("href",
-        "mailto:joo@stakeandwager.com?subject=" + encodeURIComponent("New table " + id) +
+        "mailto:sw@stakeandwager.com?subject=" + encodeURIComponent("New table " + id) +
         "&body=" + encodeURIComponent(body));
 
       go("opened");
