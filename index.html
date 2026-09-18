@@ -60,9 +60,9 @@ body{
 #glow{
   position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(120% 80% at 50% 42%, rgba(233,222,198,.14), rgba(233,222,198,0) 62%);
-  opacity:0;transition:opacity 1.6s ease;
+  opacity:0;transition:opacity 2.8s ease;
 }
-body{transition:background-color 1.6s ease}
+body{transition:background-color 2.8s ease}
 body.inside #glow{opacity:1}
 
 /* the light climbs the further in you go */
@@ -79,8 +79,8 @@ body.lit-5{background:#1E2A24}  body.lit-5 #glow{opacity:.70}
 .scene.on{display:block}
 
 @media (prefers-reduced-motion:no-preference){
-  .scene.on{animation:arrive .5s cubic-bezier(.2,.7,.3,1) both}
-  @keyframes arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .scene.on{animation:arrive .78s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes arrive{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:none}}
 }
 
 /* ---------- typography ---------- */
@@ -106,7 +106,7 @@ body.lit-5{background:#1E2A24}  body.lit-5 #glow{opacity:.70}
   position:fixed;inset:0;z-index:0;pointer-events:none;
   background:#0B120F center right / cover no-repeat;
   background-image:url('/door-bg-sm.jpg');
-  opacity:0;transition:opacity 1.5s ease, transform 1.2s cubic-bezier(.3,.7,.3,1), filter 1.2s ease;
+  opacity:0;transition:opacity 2.6s ease, transform 2.0s cubic-bezier(.3,.7,.3,1), filter 1.6s ease;
   transform:scale(1.04);
 }
 @media (min-width:900px){ #doorway{background-image:url('/door-bg.jpg')} }
@@ -159,6 +159,19 @@ body.stepping-in #doorway{opacity:0;transform:scale(1.32);filter:blur(3px)}
 @media (max-width:760px){
   .scene[data-scene="outside"]{text-align:center;max-width:100%}
 }
+
+/* ---------- sound, off unless asked for ---------- */
+#sound{
+  position:fixed;right:20px;top:18px;z-index:5;
+  border:1px solid rgba(233,222,198,.2);border-radius:2px;
+  background:rgba(11,18,15,.6);color:var(--lamp-dim);
+  font-family:inherit;font-size:12.5px;padding:7px 12px;cursor:pointer;
+  transition:color .3s ease,border-color .3s ease;
+}
+#sound:hover{color:var(--lamp);border-color:rgba(233,222,198,.45)}
+#sound:focus-visible{outline:2px solid var(--bronze-lit);outline-offset:3px}
+#sound.on{color:#E4C88A;border-color:rgba(199,154,70,.5)}
+@media (max-width:760px){#sound{right:12px;top:12px;font-size:12px;padding:6px 10px}}
 
 /* ---------- scene 0: outside, the door ---------- */
 .bell{
@@ -801,6 +814,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </style>
 </head>
 <body>
+<button id="sound" type="button" aria-pressed="false">Sound off</button>
 <div id="doorway" aria-hidden="true"></div>
 <div id="glow"></div>
 
@@ -1346,7 +1360,7 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
 </main>
 
 <footer>
-  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 28</span>
+  No money changes hands on outcomes. &nbsp;&middot;&nbsp; <span style="opacity:.7">&copy; 2026 Stakeandwager LLC</span> &nbsp;&middot;&nbsp; <span style="opacity:.5">build 29</span>
 </footer>
 
 <script>
@@ -1591,16 +1605,68 @@ footer b{font-weight:500;color:rgba(233,222,198,.7)}
   }
   idleTalk();
 
+  /* ---- the knock, if it is wanted ----
+     Synthesised, so there is no file to load and nothing autoplays.
+     Off by default: a page that makes noise into a quiet room gets closed. */
+  var soundOn = false;
+  (function(){
+    var btn = document.getElementById("sound");
+    if(!btn) return;
+    try{ soundOn = localStorage.getItem("sw_sound") === "1"; }catch(e){}
+    paint();
+    btn.addEventListener("click", function(){
+      soundOn = !soundOn;
+      try{ localStorage.setItem("sw_sound", soundOn ? "1" : "0"); }catch(e){}
+      paint();
+      if(soundOn) knockSound();
+    });
+    function paint(){
+      btn.textContent = soundOn ? "Sound on" : "Sound off";
+      btn.classList.toggle("on", soundOn);
+      btn.setAttribute("aria-pressed", String(soundOn));
+    }
+  })();
+
+  function knockSound(){
+    if(!soundOn) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    try{
+      var ctx = new AC();
+      [0, 0.26, 0.52].forEach(function(t){
+        var at = ctx.currentTime + t;
+        /* a short filtered noise burst reads as wood */
+        var len = Math.floor(ctx.sampleRate * 0.14);
+        var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+        var d = buf.getChannelData(0);
+        for(var i = 0; i < len; i++){
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 5);
+        }
+        var src = ctx.createBufferSource(); src.buffer = buf;
+        var lp = ctx.createBiquadFilter();
+        lp.type = "lowpass"; lp.frequency.value = 340; lp.Q.value = 1.1;
+        var g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, at);
+        g.gain.exponentialRampToValueAtTime(0.32, at + 0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001, at + 0.13);
+        src.connect(lp); lp.connect(g); g.connect(ctx.destination);
+        src.start(at); src.stop(at + 0.15);
+      });
+      setTimeout(function(){ try{ ctx.close(); }catch(e){} }, 1400);
+    }catch(e){}
+  }
+
   /* ---- knocking ---- */
   knock.addEventListener("click", function(){
     clearTimeout(idle);
     knock.disabled = true;
     knock.classList.add("rapping");
-    setTimeout(function(){ document.body.classList.add("stepping-in"); }, 780);
+    knockSound();
+    setTimeout(function(){ document.body.classList.add("stepping-in"); }, 900);
     setTimeout(function(){
       go("room");
       document.body.classList.remove("at-door","stepping-in");
-    }, 1350);
+    }, 2100);
   });
 
   /* ---- every other transition ---- */
