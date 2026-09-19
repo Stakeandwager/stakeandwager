@@ -1,6 +1,6 @@
 # The Stakeandwager Protocol
 
-**Version 1.0 — September 2026**
+**Version 1.1 — September 2026**
 
 A protocol for turning claims into commitments, commitments into work, and work
 into evidence somebody can stand behind.
@@ -314,6 +314,55 @@ is a specification, not a finding.
 
 ---
 
+---
+
+## Amendments — v1.1
+
+Adopted September 2026. These are stated limits, not new machinery. A
+constitution that hides its own weaknesses cannot ask anyone else for rigour.
+
+### A1 · Evidence tiers and verification scope
+
+Tier 1 outcomes are recorded as **self-reported and uncorroborated**. The
+protocol makes no claim of objective truth for them.
+
+**Mandatory display.** Interfaces must show the verification tier. Omitting it
+is prohibited, because omission creates implied validation.
+
+**Prohibited.** No interface, summary, or creator narrative may represent,
+imply or suggest that a Tier 1 outcome carries independent corroboration.
+
+**Stated limit.** The protocol records *who* attested. It does not establish
+their independence. An attester the creator controls is indistinguishable, in
+the record, from one they do not.
+
+### A2 · Structural filtering, never merit filtering
+
+**Required.** The system must reject propositions that fail the falsifiability
+check — "make the harvest better", "significant progress", anything unmeasurable.
+
+**Prohibited.** No filtering on merit, significance, scale, perceived difficulty
+or societal value. A proposition that passes the structural gate cannot be
+rejected for being trivial. That judgment belongs to the reader.
+
+### A3 · Registry canonicity — UNDEFINED
+
+The protocol lacks a permissionless, un-gated mechanism for inclusion in a
+canonical index independent of its creator. Creation and indexing currently
+depend on a single submission route.
+
+This gap is registered rather than closed.
+
+### A4 · Sybil resistance and stake friction
+
+The protocol's defence against identity multiplication, flooding and spam is
+the requirement of a committed stake per table, and nothing more.
+
+**Stated limit.** The non-empty rule prevents zero-cost flooding. It does not
+stop an actor who commits small resources across many identities. Sybil
+resistance is proportional to the total cost of opening those tables and no
+further.
+
 ## 15. Using this protocol
 
 You do not need permission.
@@ -329,7 +378,7 @@ for succession by people you have never met, send it to
 
 ---
 
-*Stakeandwager Protocol v1.0 — September 2026*
+*Stakeandwager Protocol v1.1 — September 2026*
 *Authored by John Obidinma Okoli · Stakeandwager LLC · stakeandwager.com*
 
 *This document may be quoted and referred to freely. The protocol may be
